@@ -1,54 +1,23 @@
-import { Injectable, Inject } from '@nestjs/common';
-import { SupabaseClient } from '@supabase/supabase-js';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(
-    @Inject('SUPABASE_CLIENT') private readonly supabaseClient: SupabaseClient,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getAllProducts() {
-    const { data, error } = await this.supabaseClient
-      .from('products')
-      .select('*');
-    if (error) {
-      throw new Error(`Error fetching products: ${error.message}`);
-    }
-    return data;
+    return this.prisma.product.findMany();
   }
 
-  async addProduct(product: { name: string; category: string }) {
-    const { data, error } = await this.supabaseClient
-      .from('products')
-      .insert([product]);
-    if (error) {
-      throw new Error(`Error adding product: ${error.message}`);
-    }
-    return data;
+  async addProduct() {
+    return 'Hello';
   }
 
-  async updateProduct(
-    id: string,
-    updates: { name?: string; category?: string },
-  ) {
-    const { data, error } = await this.supabaseClient
-      .from('products')
-      .update(updates)
-      .eq('id', id);
-    if (error) {
-      throw new Error(`Error updating product: ${error.message}`);
-    }
-    return data;
+  async updateProduct() {
+    return 'Hello';
   }
 
-  async deleteProduct(id: string) {
-    const { data, error } = await this.supabaseClient
-      .from('products')
-      .delete()
-      .eq('id', id);
-    if (error) {
-      throw new Error(`Error deleting product: ${error.message}`);
-    }
-    return data;
+  async deleteProduct() {
+    return 'Hello';
   }
 }
