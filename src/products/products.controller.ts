@@ -1,4 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 
 @Controller('products')
@@ -10,21 +19,23 @@ export class ProductsController {
     return this.productsService.getAllProducts();
   }
 
-  // @Post()
-  // async addProduct(@Body() product: { name: string; category: string }) {
-  //   return this.productsService.addProduct();
-  // }
-  //
-  // @Put(':id')
-  // async updateProduct(
-  //   @Param('id') id: string,
-  //   @Body() updates: { name?: string; category?: string },
-  // ) {
-  //   return this.productsService.updateProduct();
-  // }
-  //
-  // @Delete(':id')
-  // async deleteProduct(@Param('id') id: string) {
-  //   return this.productsService.deleteProduct();
-  // }
+  @Post()
+  async addProduct(@Body() product: { name: string; category?: string }) {
+    return this.productsService.addProduct(product);
+  }
+
+  @Put(':id')
+  async updateProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { name?: string; category?: string },
+  ) {
+    return this.productsService.updateProduct(id, body);
+  }
+
+  @Delete(':id')
+  async deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    console.log('id', id);
+
+    return this.productsService.deleteProduct(id);
+  }
 }
