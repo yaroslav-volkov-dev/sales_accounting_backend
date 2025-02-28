@@ -6,16 +6,16 @@ import { ProductsModule } from './modules/products/products.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SupabaseModule } from './modules/supabase/supabase.module';
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     ProductsModule,
     AuthModule,
     CategoriesModule,
     SupabaseModule,
+    SuppliersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

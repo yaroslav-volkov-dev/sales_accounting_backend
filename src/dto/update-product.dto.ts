@@ -7,6 +7,15 @@ export class UpdateProductDto {
 
   @IsOptional()
   @IsInt()
+  price: number;
+
+  @IsOptional()
+  @IsInt()
   @IsPositive()
   categoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  supplierId?: number;
 }

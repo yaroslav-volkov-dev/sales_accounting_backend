@@ -11,25 +11,28 @@ export class ProductsService {
     return this.prisma.product.findMany({});
   }
 
-  async addProduct(product: CreateProductDto) {
+  async addProduct({ categoryId, price, supplierId, name }: CreateProductDto) {
     return this.prisma.product.create({
       data: {
-        name: product.name,
-        category: product.categoryId
-          ? { connect: { id: product.categoryId } }
-          : undefined,
+        name,
+        price,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
     });
   }
 
-  async updateProduct(id: number, body: UpdateProductDto) {
+  async updateProduct(
+    id: number,
+    { name, categoryId, supplierId, price }: UpdateProductDto,
+  ) {
     return this.prisma.product.update({
       where: { id },
       data: {
-        name: body.name,
-        category: body.categoryId
-          ? { connect: { id: body.categoryId } }
-          : undefined,
+        name,
+        price,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
     });
   }
