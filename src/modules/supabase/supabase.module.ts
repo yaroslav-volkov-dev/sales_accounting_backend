@@ -6,12 +6,8 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
   providers: [
     {
       provide: 'SUPABASE_CLIENT',
-      useFactory: (): SupabaseClient => {
-        return createClient(
-          process.env.SUPABASE_URL,
-          process.env.SUPABASE_ANON_KEY,
-        );
-      },
+      useFactory: (): SupabaseClient =>
+        createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY),
     },
   ],
   exports: ['SUPABASE_CLIENT'],

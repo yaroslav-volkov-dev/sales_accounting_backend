@@ -9,6 +9,8 @@ import {
   Put,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { UpdateProductDto } from '../../dto/update-product.dto';
+import { CreateProductDto } from '../../dto/create-product.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -20,14 +22,14 @@ export class ProductsController {
   }
 
   @Post()
-  async addProduct(@Body() product: { name: string; category?: string }) {
+  async addProduct(@Body() product: CreateProductDto) {
     return this.productsService.addProduct(product);
   }
 
   @Put(':id')
   async updateProduct(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: { name?: string; category?: string },
+    @Body() body: UpdateProductDto,
   ) {
     return this.productsService.updateProduct(id, body);
   }

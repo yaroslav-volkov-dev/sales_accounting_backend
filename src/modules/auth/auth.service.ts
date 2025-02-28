@@ -2,6 +2,7 @@ import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { RegisterUserDto } from '../../dto/register-user.dto';
 import { LoginUserDto } from '../../dto/login-user.dto';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -9,7 +10,18 @@ export class AuthService {
     @Inject('SUPABASE_CLIENT') private readonly supabase: SupabaseClient,
   ) {}
 
-  async register(dto: RegisterUserDto) {
+  private setRefreshTokenCookie(res: Response, refreshToken: string) {
+    const tokenMaxAge = 60 * 60 * 24 * 7 * 1000;
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: tokenMaxAge,
+      path: '/',
+    });
+  }
+
+  async register(dto: RegisterUserDto, res: Response) {
     const { email, password, username } = dto;
     const { data, error } = await this.supabase.auth.signUp({
       email,
@@ -23,15 +35,19 @@ export class AuthService {
       throw new UnauthorizedException(error.message);
     }
 
+    this.setRefreshTokenCookie(res, data.session.refresh_token);
+
     return data.user;
   }
 
-  async login(dto: LoginUserDto) {
+  async login(dto: LoginUserDto, res: Response) {
     const { data, error } = await this.supabase.auth.signInWithPassword(dto);
 
     if (error) {
       throw new UnauthorizedException('Incorrect email or password');
     }
+
+    this.setRefreshTokenCookie(res, data.session.refresh_token);
 
     return data.session;
   }
@@ -44,5 +60,27 @@ export class AuthService {
     }
 
     return data.user;
+  }
+
+  async refreshToken(refreshToken: string) {
+    const { data, error } = await this.supabase.auth.refreshSession({
+      refresh_token: refreshToken,
+    });
+
+    if (error) {
+      throw new UnauthorizedException('Failed to refresh token');
+    }
+
+    console.log(data);
+
+    return data;
+  }
+
+  async logout(res: Response) {
+    res.clearCookie('refresh_token');
+
+    await this.supabase.auth.signOut();
+
+    return { success: true };
   }
 }
