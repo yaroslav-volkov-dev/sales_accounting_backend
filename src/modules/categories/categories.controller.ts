@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 
@@ -14,8 +15,8 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Query('includeCount') includeCount: boolean) {
+    return this.categoriesService.findAll(includeCount);
   }
 
   @Post()

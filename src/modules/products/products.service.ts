@@ -8,7 +8,25 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async getAllProducts() {
-    return this.prisma.product.findMany({});
+    return this.prisma.product.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        supplier: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+      },
+    });
   }
 
   async addProduct({ categoryId, price, supplierId, name }: CreateProductDto) {
@@ -18,6 +36,20 @@ export class ProductsService {
         price,
         category: categoryId ? { connect: { id: categoryId } } : undefined,
         supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        supplier: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
       },
     });
   }
@@ -33,6 +65,20 @@ export class ProductsService {
         price,
         category: categoryId ? { connect: { id: categoryId } } : undefined,
         supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+      },
+      include: {
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        supplier: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
       },
     });
   }

@@ -35,9 +35,10 @@ model Product {
 }
 
 model Category {
-  id      Int       @id @default(autoincrement())
-  name    String
-  Product Product[]
+  id           Int       @id @default(autoincrement())
+  name         String
+  Product      Product[]
+  productCount Int?      @default(0)
 }
 
 model Supplier {

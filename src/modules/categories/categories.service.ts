@@ -6,16 +6,30 @@ import { CreateCategoryDto } from '../../dto/create-category.dto';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
+  findAll(includeCount: boolean) {
+    if (!includeCount) {
+      return this.prisma.category.findMany();
+    }
+
+    return this.prisma.category.findMany({
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            Product: true,
+          },
+        },
+      },
+    });
+  }
+
   create(category: CreateCategoryDto) {
     return this.prisma.category.create({
       data: {
         name: category.name,
       },
     });
-  }
-
-  findAll() {
-    return this.prisma.category.findMany();
   }
 
   update(id: number) {
