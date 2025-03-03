@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from '../../dto/create-supplier.dto';
@@ -15,8 +16,8 @@ export class SuppliersController {
   constructor(private readonly suppliersService: SuppliersService) {}
 
   @Get()
-  findAll() {
-    return this.suppliersService.findAll();
+  findAll(@Query('includeCount') includeCount: boolean) {
+    return this.suppliersService.findAll(includeCount);
   }
 
   @Post()

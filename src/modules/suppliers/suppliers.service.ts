@@ -6,12 +6,26 @@ import { CreateSupplierDto } from '../../dto/create-supplier.dto';
 export class SuppliersService {
   constructor(private prisma: PrismaService) {}
 
-  create({ name }: CreateSupplierDto) {
-    return this.prisma.category.create({ data: { name } });
+  findAll(includeCount: boolean) {
+    if (!includeCount) {
+      return this.prisma.supplier.findMany();
+    }
+
+    return this.prisma.supplier.findMany({
+      select: {
+        id: true,
+        name: true,
+        _count: {
+          select: {
+            Product: true,
+          },
+        },
+      },
+    });
   }
 
-  findAll() {
-    return this.prisma.supplier.findMany();
+  create({ name }: CreateSupplierDto) {
+    return this.prisma.supplier.create({ data: { name } });
   }
 
   remove(id: number) {
