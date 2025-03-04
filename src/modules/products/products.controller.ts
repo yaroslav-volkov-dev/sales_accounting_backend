@@ -7,18 +7,20 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { UpdateProductDto } from '../../dto/update-product.dto';
 import { CreateProductDto } from '../../dto/create-product.dto';
+import { GetProductsQueryDto } from '../../dto/get-products-query.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Get()
-  async getAllProducts() {
-    return this.productsService.getAllProducts();
+  async getProducts(@Query() query: GetProductsQueryDto) {
+    return this.productsService.getProducts(query);
   }
 
   @Post()
@@ -36,8 +38,6 @@ export class ProductsController {
 
   @Delete(':id')
   async deleteProduct(@Param('id', ParseIntPipe) id: number) {
-    console.log('id', id);
-
     return this.productsService.deleteProduct(id);
   }
 }

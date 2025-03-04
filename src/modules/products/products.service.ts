@@ -2,30 +2,53 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateProductDto } from '../../dto/create-product.dto';
 import { UpdateProductDto } from '../../dto/update-product.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllProducts() {
+  private commonProductQueryOptions: Partial<Prisma.ProductFindManyArgs> = {
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      category: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
+      supplier: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
+    },
+  };
+
+  async getProducts({
+    categoryIds,
+    withoutCategory,
+  }: {
+    categoryIds?: number[];
+    withoutCategory?: boolean;
+  }) {
+    if (!categoryIds?.length && !withoutCategory) {
+      return this.prisma.product.findMany(this.commonProductQueryOptions);
+    }
+
     return this.prisma.product.findMany({
-      orderBy: {
-        createdAt: 'desc',
+      where: {
+        OR: [
+          ...(categoryIds && categoryIds.length > 0
+            ? [{ categoryId: { in: categoryIds } }]
+            : []),
+          ...(withoutCategory ? [{ categoryId: null }] : []),
+        ],
       },
-      include: {
-        category: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
-        supplier: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
-      },
+      ...this.commonProductQueryOptions,
     });
   }
 

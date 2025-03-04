@@ -71,8 +71,6 @@ export class AuthService {
       throw new UnauthorizedException('Failed to refresh token');
     }
 
-    console.log(data);
-
     return data;
   }
 
