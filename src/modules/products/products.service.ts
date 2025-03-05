@@ -31,11 +31,20 @@ export class ProductsService {
   async getProducts({
     categoryIds,
     withoutCategory,
+    suppliersIds,
+    withoutSupplier,
   }: {
     categoryIds?: number[];
     withoutCategory?: boolean;
+    suppliersIds?: number[];
+    withoutSupplier?: boolean;
   }) {
-    if (!categoryIds?.length && !withoutCategory) {
+    if (
+      !categoryIds?.length &&
+      !withoutCategory &&
+      !suppliersIds?.length &&
+      !withoutSupplier
+    ) {
       return this.prisma.product.findMany(this.commonProductQueryOptions);
     }
 
@@ -45,7 +54,11 @@ export class ProductsService {
           ...(categoryIds && categoryIds.length > 0
             ? [{ categoryId: { in: categoryIds } }]
             : []),
+          ...(suppliersIds && suppliersIds.length > 0
+            ? [{ supplierId: { in: suppliersIds } }]
+            : []),
           ...(withoutCategory ? [{ categoryId: null }] : []),
+          ...(withoutSupplier ? [{ supplierId: null }] : []),
         ],
       },
       ...this.commonProductQueryOptions,
