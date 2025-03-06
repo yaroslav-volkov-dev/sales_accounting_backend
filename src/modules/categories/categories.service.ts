@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCategoryDto } from '../../dto/create-category.dto';
+import { UpdateCategoryDto } from '../../dto/update-category-dto';
 
 @Injectable()
 export class CategoriesService {
@@ -12,6 +13,9 @@ export class CategoriesService {
     }
 
     return this.prisma.category.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
       select: {
         id: true,
         name: true,
@@ -32,8 +36,11 @@ export class CategoriesService {
     });
   }
 
-  update(id: number) {
-    return `This action updates a #${id} category`;
+  update(id: number, { name }: UpdateCategoryDto) {
+    return this.prisma.category.update({
+      where: { id },
+      data: { name },
+    });
   }
 
   remove(id: number) {
