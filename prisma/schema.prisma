@@ -45,11 +45,12 @@ model Category {
 }
 
 model Supplier {
-  id        Int       @id @default(autoincrement())
-  name      String
-  Product   Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt()
+  id          Int       @id @default(autoincrement())
+  name        String
+  phoneNumber String?
+  Product     Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt()
 }
 
 // model Sale {

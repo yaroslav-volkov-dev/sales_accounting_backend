@@ -6,10 +6,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { SuppliersService } from './suppliers.service';
 import { CreateSupplierDto } from '../../dto/create-supplier.dto';
+import { UpdateSupplierDto } from '../../dto/update-supplier-dto';
 
 @Controller('suppliers')
 export class SuppliersController {
@@ -28,5 +30,13 @@ export class SuppliersController {
   @Delete(':id')
   async deleteSupplier(@Param('id', ParseIntPipe) id: number) {
     return this.suppliersService.remove(id);
+  }
+
+  @Put(':id')
+  async updateSupplier(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateSupplierDto,
+  ) {
+    return this.suppliersService.update(id, body);
   }
 }

@@ -19,6 +19,8 @@ export class CategoriesService {
       select: {
         id: true,
         name: true,
+        createdAt: true,
+        updatedAt: true,
         _count: {
           select: {
             Product: true,

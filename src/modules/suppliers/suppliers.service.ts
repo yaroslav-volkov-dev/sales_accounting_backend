@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateSupplierDto } from '../../dto/create-supplier.dto';
+import { UpdateSupplierDto } from '../../dto/update-supplier-dto';
 
 @Injectable()
 export class SuppliersService {
@@ -15,6 +16,7 @@ export class SuppliersService {
       select: {
         id: true,
         name: true,
+        phoneNumber: true,
         _count: {
           select: {
             Product: true,
@@ -24,11 +26,18 @@ export class SuppliersService {
     });
   }
 
-  create({ name }: CreateSupplierDto) {
-    return this.prisma.supplier.create({ data: { name } });
+  create(data: CreateSupplierDto) {
+    return this.prisma.supplier.create({ data });
   }
 
   remove(id: number) {
     return this.prisma.supplier.delete({ where: { id } });
+  }
+
+  update(id: number, data: UpdateSupplierDto) {
+    return this.prisma.supplier.update({
+      where: { id },
+      data,
+    });
   }
 }
