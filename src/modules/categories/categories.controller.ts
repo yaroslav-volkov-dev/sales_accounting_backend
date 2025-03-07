@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { UpdateCategoryDto } from '../../dto/update-category-dto';
+import { CreateCategoryDto } from '../../dto/create-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -22,7 +23,7 @@ export class CategoriesController {
   }
 
   @Post()
-  async addCategory(@Body() category: { name: string; categoryId?: number }) {
+  async addCategory(@Body() category: CreateCategoryDto) {
     return this.categoriesService.create(category);
   }
 

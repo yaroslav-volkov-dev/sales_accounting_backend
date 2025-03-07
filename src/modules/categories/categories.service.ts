@@ -30,18 +30,14 @@ export class CategoriesService {
     });
   }
 
-  create(category: CreateCategoryDto) {
-    return this.prisma.category.create({
-      data: {
-        name: category.name,
-      },
-    });
+  create(data: CreateCategoryDto) {
+    return this.prisma.category.create({ data });
   }
 
-  update(id: number, { name }: UpdateCategoryDto) {
+  update(id: number, data: UpdateCategoryDto) {
     return this.prisma.category.update({
       where: { id },
-      data: { name },
+      data,
     });
   }
 

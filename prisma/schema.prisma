@@ -32,7 +32,6 @@ model Product {
   categoryId Int?
   supplier   Supplier? @relation(fields: [supplierId], references: [id])
   supplierId Int?
-  // Sale       Sale[]
 }
 
 model Category {
@@ -53,9 +52,11 @@ model Supplier {
   updatedAt   DateTime  @updatedAt()
 }
 
-// model Sale {
-//   id        Int     @id @default(autoincrement())
-//   salePrice Int
-//   product   Product @relation(fields: [productId], references: [id])
-//   productId Int
-// }
+model Store {
+  id          Int      @id @default(autoincrement())
+  name        String
+  location    String?
+  phoneNumber String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

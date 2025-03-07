@@ -7,6 +7,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
+import { StoresModule } from './modules/stores/stores.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SuppliersModule } from './modules/suppliers/suppliers.module';
     CategoriesModule,
     SupabaseModule,
     SuppliersModule,
+    StoresModule,
   ],
   controllers: [AppController],
   providers: [AppService],

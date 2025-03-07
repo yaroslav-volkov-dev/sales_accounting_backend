@@ -13,6 +13,9 @@ export class SuppliersService {
     }
 
     return this.prisma.supplier.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
       select: {
         id: true,
         name: true,
