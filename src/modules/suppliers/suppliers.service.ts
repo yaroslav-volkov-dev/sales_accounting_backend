@@ -9,7 +9,11 @@ export class SuppliersService {
 
   findAll(includeCount: boolean) {
     if (!includeCount) {
-      return this.prisma.supplier.findMany();
+      return this.prisma.supplier.findMany({
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     }
 
     return this.prisma.supplier.findMany({

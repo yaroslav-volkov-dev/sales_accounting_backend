@@ -8,7 +8,11 @@ export class StoresService {
   constructor(private prisma: PrismaService) {}
 
   findAll() {
-    return this.prisma.store.findMany();
+    return this.prisma.store.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
   create(data: CreateStoreDto) {

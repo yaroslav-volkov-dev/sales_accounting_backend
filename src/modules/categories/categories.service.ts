@@ -9,7 +9,11 @@ export class CategoriesService {
 
   findAll(includeCount: boolean) {
     if (!includeCount) {
-      return this.prisma.category.findMany();
+      return this.prisma.category.findMany({
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
     }
 
     return this.prisma.category.findMany({
