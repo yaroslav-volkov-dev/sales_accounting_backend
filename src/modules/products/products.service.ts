@@ -13,13 +13,13 @@ export class ProductsService {
       createdAt: 'desc',
     },
     include: {
-      category: {
+      Category: {
         select: {
           name: true,
           id: true,
         },
       },
-      supplier: {
+      Supplier: {
         select: {
           name: true,
           id: true,
@@ -70,17 +70,17 @@ export class ProductsService {
       data: {
         name,
         price,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
-        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+        Category: categoryId ? { connect: { id: categoryId } } : undefined,
+        Supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
-        category: {
+        Category: {
           select: {
             name: true,
             id: true,
           },
         },
-        supplier: {
+        Supplier: {
           select: {
             name: true,
             id: true,
@@ -99,17 +99,17 @@ export class ProductsService {
       data: {
         name,
         price,
-        category: categoryId ? { connect: { id: categoryId } } : undefined,
-        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+        Category: categoryId ? { connect: { id: categoryId } } : undefined,
+        Supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
-        category: {
+        Category: {
           select: {
             name: true,
             id: true,
           },
         },
-        supplier: {
+        Supplier: {
           select: {
             name: true,
             id: true,

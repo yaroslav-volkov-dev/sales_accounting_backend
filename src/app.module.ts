@@ -8,6 +8,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { SupabaseModule } from './modules/supabase/supabase.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { StoresModule } from './modules/stores/stores.module';
+import { ShiftsModule } from './modules/shifts/shifts.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { StoresModule } from './modules/stores/stores.module';
     SupabaseModule,
     SuppliersModule,
     StoresModule,
+    ShiftsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

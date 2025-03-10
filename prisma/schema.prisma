@@ -14,24 +14,16 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Product {
   id         Int       @id @default(autoincrement())
   name       String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt()
   price      Int
-  category   Category? @relation(fields: [categoryId], references: [id])
   categoryId Int?
-  supplier   Supplier? @relation(fields: [supplierId], references: [id])
   supplierId Int?
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
 }
 
 model Category {
@@ -59,4 +51,14 @@ model Store {
   phoneNumber String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  Shift       Shift[]
+}
+
+model Shift {
+  id        Int       @id @default(autoincrement())
+  userId    String
+  storeId   Int
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  Store     Store     @relation(fields: [storeId], references: [id])
 }
