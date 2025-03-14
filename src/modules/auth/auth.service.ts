@@ -3,11 +3,13 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { RegisterUserDto } from '../../dto/register-user.dto';
 import { LoginUserDto } from '../../dto/login-user.dto';
 import { Response } from 'express';
+import { ProfilesService } from '../../profiles/profiles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject('SUPABASE_CLIENT') private readonly supabase: SupabaseClient,
+    private readonly profilesService: ProfilesService,
   ) {}
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
@@ -34,6 +36,17 @@ export class AuthService {
     if (error) {
       throw new UnauthorizedException(error.message);
     }
+
+    const id = data.user?.id;
+    if (!id) {
+      throw new UnauthorizedException('User ID not found after registration');
+    }
+
+    await this.profilesService.create({
+      id,
+      username,
+      email,
+    });
 
     this.setRefreshTokenCookie(res, data.session.refresh_token);
 

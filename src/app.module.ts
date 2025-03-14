@@ -9,6 +9,8 @@ import { SupabaseModule } from './modules/supabase/supabase.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { StoresModule } from './modules/stores/stores.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
+import { ProfilesModule } from './profiles/profiles.module';
+import { SalesModule } from './sales/sales.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ShiftsModule } from './modules/shifts/shifts.module';
     SuppliersModule,
     StoresModule,
     ShiftsModule,
+    ProfilesModule,
+    SalesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -14,6 +14,19 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model Profile {
+  id          String   @id @default(uuid()) @map("id")
+  username    String
+  email       String
+  firstName   String
+  lastName    String
+  phoneNumber String?
+  createdAt   DateTime @default(now())
+  Sale        Sale[]
+
+  @@map("Profiles")
+}
+
 model Product {
   id         Int       @id @default(autoincrement())
   name       String
@@ -24,6 +37,7 @@ model Product {
   supplierId Int?
   Category   Category? @relation(fields: [categoryId], references: [id])
   Supplier   Supplier? @relation(fields: [supplierId], references: [id])
+  Sale       Sale[]
 }
 
 model Category {
@@ -52,6 +66,7 @@ model Store {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Shift       Shift[]
+  Sale        Sale[]
 }
 
 model Shift {
@@ -61,4 +76,22 @@ model Shift {
   startedAt DateTime  @default(now())
   endedAt   DateTime?
   Store     Store     @relation(fields: [storeId], references: [id])
+  Sale      Sale[]
+}
+
+model Sale {
+  id            Int      @id @default(autoincrement())
+  productId     Int
+  storeId       Int
+  shiftId       Int
+  profileId     String
+  quantity      Int
+  price         Int
+  paymentMethod String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Product       Product  @relation(fields: [productId], references: [id])
+  Store         Store    @relation(fields: [storeId], references: [id])
+  Shift         Shift    @relation(fields: [shiftId], references: [id])
+  Profile       Profile  @relation(fields: [profileId], references: [id])
 }
