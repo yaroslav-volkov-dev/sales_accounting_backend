@@ -10,13 +10,11 @@ export class CreateProfileDto {
   @IsString()
   email: string;
 
-  @IsOptional()
   @IsString()
-  firstName?: string;
+  firstName: string;
 
-  @IsOptional()
   @IsString()
-  lastName?: string;
+  lastName: string;
 
   @IsOptional()
   @IsString()

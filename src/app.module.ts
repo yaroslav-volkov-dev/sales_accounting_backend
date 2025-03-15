@@ -9,8 +9,8 @@ import { SupabaseModule } from './modules/supabase/supabase.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { StoresModule } from './modules/stores/stores.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
-import { ProfilesModule } from './profiles/profiles.module';
-import { SalesModule } from './sales/sales.module';
+import { ProfilesModule } from './modules/profiles/profiles.module';
+import { SalesModule } from './modules/sales/sales.module';
 
 @Module({
   imports: [
@@ -28,4 +28,4 @@ import { SalesModule } from './sales/sales.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

@@ -14,6 +14,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
 model Profile {
   id          String   @id @default(uuid()) @map("id")
   username    String
@@ -80,18 +85,18 @@ model Shift {
 }
 
 model Sale {
-  id            Int      @id @default(autoincrement())
+  id            Int           @id @default(autoincrement())
   productId     Int
   storeId       Int
   shiftId       Int
   profileId     String
   quantity      Int
   price         Int
-  paymentMethod String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  Product       Product  @relation(fields: [productId], references: [id])
-  Store         Store    @relation(fields: [storeId], references: [id])
-  Shift         Shift    @relation(fields: [shiftId], references: [id])
-  Profile       Profile  @relation(fields: [profileId], references: [id])
+  paymentMethod PaymentMethod
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  Product       Product       @relation(fields: [productId], references: [id])
+  Store         Store         @relation(fields: [storeId], references: [id])
+  Shift         Shift         @relation(fields: [shiftId], references: [id])
+  Profile       Profile       @relation(fields: [profileId], references: [id])
 }

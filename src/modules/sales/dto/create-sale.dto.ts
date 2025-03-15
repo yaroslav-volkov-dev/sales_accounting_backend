@@ -1,19 +1,17 @@
 import { IsNotEmpty, IsNumber, IsString, IsUUID, IsEnum } from 'class-validator';
+import { PaymentMethod } from '@prisma/client';
 
 export class CreateSaleDto {
     @IsUUID()
     productId: string;
 
     @IsUUID()
-    @IsNotEmpty()
     storeId: string;
 
     @IsUUID()
-    @IsNotEmpty()
     shiftId: string;
 
     @IsUUID()
-    @IsNotEmpty()
     profileId: string;
 
     @IsNumber()
@@ -25,7 +23,6 @@ export class CreateSaleDto {
     price: number;
 
     @IsEnum(PaymentMethod)
-    @IsNotEmpty()
     paymentMethod: PaymentMethod;
 }
 
