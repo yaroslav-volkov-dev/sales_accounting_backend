@@ -4,6 +4,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { CreateUserDto } from "./dto/create-user-dto";
 import { Response } from "express";
 import { LoginUserDto } from "./dto/login-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -98,5 +99,14 @@ export class UsersService {
 
   async getUsers() {
     return this.prisma.profile.findMany();
+  }
+
+  async updateUser(id: string, dto: UpdateUserDto) {
+    const user = await this.prisma.profile.update({
+      where: { id },
+      data: dto,
+    });
+
+    return user;
   }
 }

@@ -1,13 +1,19 @@
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, Headers, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, Headers, ValidationPipe, Put, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
 import { Response } from 'express';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Request } from 'express';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
+
+  @Get()
+  async getUsers() {
+    return this.usersService.getUsers();
+  }
 
   @Post('register')
   async register(
@@ -39,5 +45,10 @@ export class UsersController {
   @Post('logout')
   async logout(@Res({ passthrough: true }) res: Response) {
     return this.usersService.logout(res);
+  }
+
+  @Put('update/:id')
+  async updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) {
+    return this.usersService.updateUser(id, dto);
   }
 }
