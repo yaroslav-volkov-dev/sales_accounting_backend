@@ -21,7 +21,6 @@ enum PaymentMethod {
 
 model Profile {
   id          String   @id @default(uuid()) @map("id")
-  username    String
   email       String
   firstName   String
   lastName    String

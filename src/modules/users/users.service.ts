@@ -1,14 +1,15 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { SupabaseClient } from '@supabase/supabase-js';
-import { RegisterUserDto } from '../../dto/register-user.dto';
-import { LoginUserDto } from '../../dto/login-user.dto';
-import { Response } from 'express';
-import { ProfilesService } from '../profiles/profiles.service';
+import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { PrismaService } from "src/prisma/prisma.service";
+import { CreateUserDto } from "./dto/create-user-dto";
+import { Response } from "express";
+import { LoginUserDto } from "./dto/login-user.dto";
+
 @Injectable()
-export class AuthService {
+export class UsersService {
   constructor(
+    private readonly prisma: PrismaService,
     @Inject('SUPABASE_CLIENT') private readonly supabase: SupabaseClient,
-    private readonly profilesService: ProfilesService,
   ) { }
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
@@ -22,13 +23,21 @@ export class AuthService {
     });
   }
 
-  async register(dto: RegisterUserDto, res: Response) {
-    const { email, password, username } = dto;
+  async register(createUserDto: CreateUserDto, res: Response) {
+    const { email, password } = createUserDto;
+
+    const userData = {
+      email,
+      firstName: createUserDto.firstName,
+      lastName: createUserDto.lastName,
+      phoneNumber: createUserDto.phoneNumber,
+    }
+
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { username },
+        data: { userData },
       },
     });
 
@@ -42,12 +51,8 @@ export class AuthService {
       throw new UnauthorizedException('User ID not found after registration');
     }
 
-    await this.profilesService.create({
-      id,
-      username,
-      email,
-      firstName: '',
-      lastName: '',
+    await this.prisma.profile.create({
+      data: { id, ...userData }
     });
 
     this.setRefreshTokenCookie(res, data.session.refresh_token);
@@ -67,16 +72,6 @@ export class AuthService {
     return data.session;
   }
 
-  async getMe(accessToken: string) {
-    const { data, error } = await this.supabase.auth.getUser(accessToken);
-
-    if (error || !data.user) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    return data.user;
-  }
-
   async refreshToken(refreshToken: string) {
     const { data, error } = await this.supabase.auth.refreshSession({
       refresh_token: refreshToken,
@@ -86,8 +81,12 @@ export class AuthService {
       throw new UnauthorizedException('Failed to refresh token');
     }
 
-    return data;
+    const accessToken = data.session.access_token;
+    const user = await this.prisma.profile.findFirst({ where: { id: data.user.id } });
+
+    return { accessToken, user };
   }
+
 
   async logout(res: Response) {
     res.clearCookie('refresh_token');
@@ -95,5 +94,9 @@ export class AuthService {
     await this.supabase.auth.signOut();
 
     return { success: true };
+  }
+
+  async getUsers() {
+    return this.prisma.profile.findMany();
   }
 }
