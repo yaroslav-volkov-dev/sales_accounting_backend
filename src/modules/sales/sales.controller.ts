@@ -5,7 +5,7 @@ import { UpdateSaleDto } from './dto/update-sale.dto';
 
 @Controller('sales')
 export class SalesController {
-  constructor(private readonly salesService: SalesService) {}
+  constructor(private readonly salesService: SalesService) { }
 
   @Post()
   create(@Body() createSaleDto: CreateSaleDto) {
@@ -15,6 +15,11 @@ export class SalesController {
   @Get()
   findAll() {
     return this.salesService.findAll();
+  }
+
+  @Get('shift/:shiftId')
+  findAllByShiftId(@Param('shiftId') shiftId: number) {
+    return this.salesService.findAllByShiftId(shiftId);
   }
 
   @Get(':id')

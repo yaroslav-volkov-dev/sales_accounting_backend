@@ -88,14 +88,14 @@ model Sale {
   productId     Int
   storeId       Int
   shiftId       Int
-  profileId     String
+  userId        String
   quantity      Int
-  price         Int
+  sellingPrice  Int
   paymentMethod PaymentMethod
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   Product       Product       @relation(fields: [productId], references: [id])
   Store         Store         @relation(fields: [storeId], references: [id])
   Shift         Shift         @relation(fields: [shiftId], references: [id])
-  Profile       Profile       @relation(fields: [profileId], references: [id])
+  Profile       Profile       @relation(fields: [userId], references: [id])
 }
