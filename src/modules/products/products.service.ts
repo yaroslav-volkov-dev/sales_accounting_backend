@@ -6,9 +6,12 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   private commonProductQueryOptions: Partial<Prisma.ProductFindManyArgs> = {
+    where: {
+      isActive: true,
+    },
     orderBy: {
       createdAt: 'desc',
     },
@@ -50,6 +53,7 @@ export class ProductsService {
 
     return this.prisma.product.findMany({
       where: {
+        isActive: true,
         OR: [
           ...(categoryIds && categoryIds.length > 0
             ? [{ categoryId: { in: categoryIds } }]
@@ -70,6 +74,7 @@ export class ProductsService {
       data: {
         name,
         price,
+        isActive: true,
         Category: categoryId ? { connect: { id: categoryId } } : undefined,
         Supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
@@ -120,6 +125,15 @@ export class ProductsService {
   }
 
   async deleteProduct(id: number) {
+    // Мягкое удаление - устанавливаем isActive в false
+    return this.prisma.product.update({
+      where: { id },
+      data: { isActive: false },
+    });
+  }
+
+  async permanentDeleteProduct(id: number) {
+    // Полное удаление из базы данных
     return this.prisma.product.delete({ where: { id } });
   }
 }

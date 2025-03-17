@@ -4,7 +4,6 @@ export class CreateSupplierDto {
   @IsString()
   name: string;
 
-  @IsOptional()
   @IsString()
-  phoneNumber?: string;
+  phoneNumber: string;
 }

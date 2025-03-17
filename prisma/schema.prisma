@@ -37,6 +37,7 @@ model Product {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt()
   price      Int
+  isActive   Boolean   @default(true)
   categoryId Int?
   supplierId Int?
   Category   Category? @relation(fields: [categoryId], references: [id])
@@ -45,18 +46,17 @@ model Product {
 }
 
 model Category {
-  id           Int       @id @default(autoincrement())
-  name         String
-  Product      Product[]
-  productCount Int?      @default(0)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt()
+  id        Int       @id @default(autoincrement())
+  name      String
+  Product   Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt()
 }
 
 model Supplier {
   id          Int       @id @default(autoincrement())
   name        String
-  phoneNumber String?
+  phoneNumber String
   Product     Product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt()
@@ -65,8 +65,8 @@ model Supplier {
 model Store {
   id          Int      @id @default(autoincrement())
   name        String
-  location    String?
-  phoneNumber String?
+  location    String
+  phoneNumber String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   Shift       Shift[]
@@ -85,15 +85,15 @@ model Shift {
 
 model Sale {
   id            Int           @id @default(autoincrement())
-  productId     Int
-  storeId       Int
-  shiftId       Int
-  userId        String
   quantity      Int
   sellingPrice  Int
   paymentMethod PaymentMethod
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  productId     Int
+  storeId       Int
+  shiftId       Int
+  userId        String
   Product       Product       @relation(fields: [productId], references: [id])
   Store         Store         @relation(fields: [storeId], references: [id])
   Shift         Shift         @relation(fields: [shiftId], references: [id])

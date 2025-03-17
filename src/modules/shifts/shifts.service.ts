@@ -9,7 +9,7 @@ import { CloseShiftDto } from './dto/close-shift.dto';
 
 @Injectable()
 export class ShiftsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getAll() {
     return this.prisma.shift.findMany();
@@ -46,12 +46,12 @@ export class ShiftsService {
     return this.prisma.shift.findFirst({
       where: { userId, endedAt: null },
       include: {
-        Store: {
-          select: {
-            name: true,
-            location: true,
-          },
-        },
+        Store: true,
+        Sale: {
+          include: {
+            Product: true
+          }
+        }
       },
     });
   }

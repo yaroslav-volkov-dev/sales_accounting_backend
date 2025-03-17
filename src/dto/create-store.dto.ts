@@ -6,9 +6,9 @@ export class CreateStoreDto {
 
   @IsOptional()
   @IsString()
-  location?: string;
+  location: string;
 
   @IsOptional()
   @IsString()
-  phoneNumber?: string;
+  phoneNumber: string;
 }

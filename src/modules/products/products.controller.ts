@@ -16,7 +16,7 @@ import { GetProductsQueryDto } from '../../dto/get-products-query.dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Get()
   async getProducts(@Query() query: GetProductsQueryDto) {
@@ -39,5 +39,10 @@ export class ProductsController {
   @Delete(':id')
   async deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.deleteProduct(id);
+  }
+
+  @Delete(':id/permanent')
+  async permanentDeleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.permanentDeleteProduct(id);
   }
 }
