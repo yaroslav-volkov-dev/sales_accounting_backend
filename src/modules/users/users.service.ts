@@ -5,6 +5,7 @@ import { CreateUserDto } from "./dto/create-user-dto";
 import { Response } from "express";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { use } from "passport";
 
 @Injectable()
 export class UsersService {
@@ -70,11 +71,23 @@ export class UsersService {
 
     const refreshToken = data.session.refresh_token;
     const accessToken = data.session.access_token;
-    const user = await this.prisma.profile.findFirst({ where: { id: data.user.id } });
+    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
 
     this.setRefreshTokenCookie(res, refreshToken);
 
     return { accessToken, user };
+  }
+
+  async getMe(accessToken: string) {
+    const { data, error } = await this.supabase.auth.getUser(accessToken);
+
+    if (error) {
+      throw new UnauthorizedException('Failed to get user');
+    }
+
+    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
+
+    return { user };
   }
 
   async refreshSession(refreshToken: string) {
@@ -85,11 +98,10 @@ export class UsersService {
     }
 
     const accessToken = data.session.access_token;
-    const user = await this.prisma.profile.findFirst({ where: { id: data.user.id } });
+    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
 
     return { accessToken, user };
   }
-
 
   async logout(res: Response) {
     res.clearCookie('refresh_token');

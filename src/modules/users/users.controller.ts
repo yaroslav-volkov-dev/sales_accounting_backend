@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, Headers, ValidationPipe, Put, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, ValidationPipe, Put, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user-dto';
-import { Response } from 'express';
+import { request, Response } from 'express';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ExtractJwt } from 'passport-jwt';
 
 @Controller('users')
 export class UsersController {
@@ -13,6 +14,12 @@ export class UsersController {
   @Get()
   async getUsers() {
     return this.usersService.getUsers();
+  }
+
+  @Get('me')
+  async getMe(@Req() req) {
+    // throw new UnauthorizedException('test');
+    return this.usersService.getMe(req.headers.authorization.split(' ')[1]);
   }
 
   @Post('register')
