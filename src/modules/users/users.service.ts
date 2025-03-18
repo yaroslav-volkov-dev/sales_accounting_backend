@@ -52,13 +52,13 @@ export class UsersService {
       throw new UnauthorizedException('User ID not found after registration');
     }
 
-    await this.prisma.profile.create({
-      data: { id, ...userData }
-    });
+    const refreshToken = data.session.refresh_token;
+    const accessToken = data.session.access_token;
+    const user = await this.prisma.profile.create({ data: { id, ...userData } });
 
-    this.setRefreshTokenCookie(res, data.session.refresh_token);
+    this.setRefreshTokenCookie(res, refreshToken);
 
-    return data.user;
+    return { accessToken, user };
   }
 
   async login(dto: LoginUserDto, res: Response) {
@@ -68,15 +68,17 @@ export class UsersService {
       throw new UnauthorizedException('Incorrect email or password');
     }
 
-    this.setRefreshTokenCookie(res, data.session.refresh_token);
+    const refreshToken = data.session.refresh_token;
+    const accessToken = data.session.access_token;
+    const user = await this.prisma.profile.findFirst({ where: { id: data.user.id } });
 
-    return data.session;
+    this.setRefreshTokenCookie(res, refreshToken);
+
+    return { accessToken, user };
   }
 
-  async refreshToken(refreshToken: string) {
-    const { data, error } = await this.supabase.auth.refreshSession({
-      refresh_token: refreshToken,
-    });
+  async refreshSession(refreshToken: string) {
+    const { data, error } = await this.supabase.auth.refreshSession({ refresh_token: refreshToken });
 
     if (error) {
       throw new UnauthorizedException('Failed to refresh token');

@@ -39,7 +39,7 @@ export class UsersController {
       throw new UnauthorizedException('Refresh token not found');
     }
 
-    return this.usersService.refreshToken(refreshToken);
+    return this.usersService.refreshSession(refreshToken);
   }
 
   @Post('logout')
