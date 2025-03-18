@@ -5,8 +5,6 @@ import { CreateUserDto } from "./dto/create-user-dto";
 import { Response } from "express";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { use } from "passport";
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -79,6 +77,10 @@ export class UsersService {
   }
 
   async getMe(accessToken: string) {
+    if (!accessToken) {
+      throw new UnauthorizedException('Token not provided');
+    }
+
     const { data, error } = await this.supabase.auth.getUser(accessToken);
 
     if (error) {

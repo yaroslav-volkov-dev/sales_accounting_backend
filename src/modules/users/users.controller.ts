@@ -18,8 +18,7 @@ export class UsersController {
 
   @Get('me')
   async getMe(@Req() req) {
-    // throw new UnauthorizedException('test');
-    return this.usersService.getMe(req.headers.authorization.split(' ')[1]);
+    return this.usersService.getMe(req.headers.authorization?.split(' ')[1]);
   }
 
   @Post('register')
