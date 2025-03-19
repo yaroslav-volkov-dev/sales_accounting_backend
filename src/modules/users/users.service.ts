@@ -5,6 +5,7 @@ import { CreateUserDto } from "./dto/create-user-dto";
 import { Response } from "express";
 import { LoginUserDto } from "./dto/login-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
 @Injectable()
 export class UsersService {
   constructor(
@@ -13,12 +14,21 @@ export class UsersService {
   ) { }
 
   private setRefreshTokenCookie(res: Response, refreshToken: string) {
-    const tokenMaxAge = 60 * 60 * 24 * 7 * 1000;
-    res.cookie('refresh_token', refreshToken, {
+    res.cookie(TokenName.REFRESH_TOKEN, refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: tokenMaxAge,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
+      path: '/',
+    });
+  }
+
+  private setAccessTokenCookie(res: Response, accessToken: string) {
+    res.cookie(TokenName.ACCESS_TOKEN, accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: ACCESS_TOKEN_MAX_AGE,
       path: '/',
     });
   }
@@ -56,8 +66,9 @@ export class UsersService {
     const user = await this.prisma.profile.create({ data: { id, ...userData } });
 
     this.setRefreshTokenCookie(res, refreshToken);
+    this.setAccessTokenCookie(res, accessToken);
 
-    return { accessToken, user };
+    return { user };
   }
 
   async login(dto: LoginUserDto, res: Response) {
@@ -72,8 +83,9 @@ export class UsersService {
     const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
 
     this.setRefreshTokenCookie(res, refreshToken);
+    this.setAccessTokenCookie(res, accessToken);
 
-    return { accessToken, user };
+    return { user };
   }
 
   async getMe(accessToken: string) {
@@ -92,21 +104,27 @@ export class UsersService {
     return { user };
   }
 
-  async refreshSession(refreshToken: string) {
-    const { data, error } = await this.supabase.auth.refreshSession({ refresh_token: refreshToken });
+  async refreshSession(token: string, res: Response) {
+    const { data, error } = await this.supabase.auth.refreshSession({ refresh_token: token });
 
     if (error) {
       throw new UnauthorizedException('Failed to refresh token');
     }
 
-    const accessToken = data.session.access_token;
     const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
 
-    return { accessToken, user };
+    const refreshToken = data.session.refresh_token;
+    const accessToken = data.session.access_token;
+
+    this.setRefreshTokenCookie(res, refreshToken);
+    this.setAccessTokenCookie(res, accessToken);
+
+    return { user };
   }
 
   async logout(res: Response) {
-    res.clearCookie('refresh_token');
+    res.clearCookie(TokenName.REFRESH_TOKEN);
+    res.clearCookie(TokenName.ACCESS_TOKEN);
 
     await this.supabase.auth.signOut();
 

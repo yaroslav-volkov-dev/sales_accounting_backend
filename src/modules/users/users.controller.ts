@@ -5,7 +5,7 @@ import { request, Response } from 'express';
 import { LoginUserDto } from './dto/login-user.dto';
 import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ExtractJwt } from 'passport-jwt';
+import { TokenName } from 'src/constants';
 
 @Controller('users')
 export class UsersController {
@@ -18,7 +18,7 @@ export class UsersController {
 
   @Get('me')
   async getMe(@Req() req) {
-    return this.usersService.getMe(req.headers.authorization?.split(' ')[1]);
+    return this.usersService.getMe(req.cookies[TokenName.ACCESS_TOKEN]);
   }
 
   @Post('register')
@@ -38,14 +38,14 @@ export class UsersController {
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request) {
-    const refreshToken = req.cookies['refresh_token'];
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies[TokenName.REFRESH_TOKEN];
 
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token not found');
     }
 
-    return this.usersService.refreshSession(refreshToken);
+    return this.usersService.refreshSession(refreshToken, res);
   }
 
   @Post('logout')
