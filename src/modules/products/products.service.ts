@@ -8,28 +8,33 @@ import { Prisma } from '@prisma/client';
 export class ProductsService {
   constructor(private prisma: PrismaService) { }
 
-  private commonProductQueryOptions: Partial<Prisma.ProductFindManyArgs> = {
-    where: {
-      isActive: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    include: {
-      Category: {
-        select: {
-          name: true,
-          id: true,
+  private buildGetProductsFilters(
+    filters?: Prisma.ProductWhereInput,
+  ): Prisma.ProductFindManyArgs {
+    return {
+      where: {
+        isActive: true,
+        ...(filters || {}),
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        Category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        Supplier: {
+          select: {
+            name: true,
+            id: true,
+          },
         },
       },
-      Supplier: {
-        select: {
-          name: true,
-          id: true,
-        },
-      },
-    },
-  };
+    };
+  }
 
   async getProducts({
     categoryIds,
@@ -48,25 +53,22 @@ export class ProductsService {
       !suppliersIds?.length &&
       !withoutSupplier
     ) {
-      return this.prisma.product.findMany(this.commonProductQueryOptions);
+      return this.prisma.product.findMany(this.buildGetProductsFilters());
     }
 
-    return this.prisma.product.findMany({
-      where: {
-        isActive: true,
-        OR: [
-          ...(categoryIds && categoryIds.length > 0
-            ? [{ categoryId: { in: categoryIds } }]
-            : []),
-          ...(suppliersIds && suppliersIds.length > 0
-            ? [{ supplierId: { in: suppliersIds } }]
-            : []),
-          ...(withoutCategory ? [{ categoryId: null }] : []),
-          ...(withoutSupplier ? [{ supplierId: null }] : []),
-        ],
-      },
-      ...this.commonProductQueryOptions,
-    });
+    return this.prisma.product.findMany(this.buildGetProductsFilters({
+      OR: [
+        ...(categoryIds && categoryIds.length > 0
+          ? [{ categoryId: { in: categoryIds } }]
+          : []),
+        ...(suppliersIds && suppliersIds.length > 0
+          ? [{ supplierId: { in: suppliersIds } }]
+          : []),
+        ...(withoutCategory ? [{ categoryId: null }] : []),
+        ...(withoutSupplier ? [{ supplierId: null }] : []),
+      ]
+    }));
+
   }
 
   async addProduct({ categoryId, price, supplierId, name }: CreateProductDto) {
