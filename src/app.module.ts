@@ -10,6 +10,9 @@ import { StoresModule } from './modules/stores/stores.module';
 import { ShiftsModule } from './modules/shifts/shifts.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ProfileModule } from './modules/profile/profile.module';
+import { CompanyModule } from './modules/company/company.module';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import { UsersModule } from './modules/users/users.module';
     StoresModule,
     ShiftsModule,
     SalesModule,
-    UsersModule
+    UsersModule,
+    AuthModule,
+    ProfileModule,
+    CompanyModule
   ],
   controllers: [AppController],
   providers: [AppService],
