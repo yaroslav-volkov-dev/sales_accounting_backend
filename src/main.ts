@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost } from '@nestjs/core';
+import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
 
   app.use(cookieParser());
 
@@ -12,6 +16,15 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+    }),
+  );
+
+  app.useGlobalFilters(
+    new PrismaClientExceptionFilter(httpAdapter, {
+      P2000: { statusCode: 400 },
+      P2002: { statusCode: 409 },
+      P2003: { statusCode: 409 },
+      P2025: { statusCode: 404 },
     }),
   );
 
