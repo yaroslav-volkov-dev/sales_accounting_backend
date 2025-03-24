@@ -89,10 +89,6 @@ export class AuthService {
   }
 
   async getMe(accessToken: string) {
-    if (!accessToken) {
-      throw new UnauthorizedException('Token not provided');
-    }
-
     const { data, error } = await this.supabase.auth.getUser(accessToken);
 
     if (error) {

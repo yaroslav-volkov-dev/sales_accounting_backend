@@ -20,15 +20,13 @@ enum PaymentMethod {
 }
 
 model Profile {
-  id          String   @id @default(uuid()) @map("id")
+  id          String   @id @default(uuid())
   email       String
   firstName   String
   lastName    String
   phoneNumber String?
   createdAt   DateTime @default(now())
   Sale        Sale[]
-
-  @@map("Profiles")
 }
 
 model Product {
