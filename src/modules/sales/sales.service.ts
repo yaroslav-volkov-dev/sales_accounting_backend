@@ -12,10 +12,10 @@ export class SalesService {
     return this.prisma.sale.create({
       data: createSaleDto,
       include: {
-        Product: true,
-        Store: true,
-        Shift: true,
-        Profile: true,
+        product: true,
+        store: true,
+        shift: true,
+        profile: true,
       },
     });
   }
@@ -23,10 +23,10 @@ export class SalesService {
   findAll() {
     return this.prisma.sale.findMany({
       include: {
-        Product: true,
-        Store: true,
-        Shift: true,
-        Profile: true,
+        product: true,
+        store: true,
+        shift: true,
+        profile: true,
       },
     });
   }
@@ -35,10 +35,10 @@ export class SalesService {
     return this.prisma.sale.findUnique({
       where: { id },
       include: {
-        Product: true,
-        Store: true,
-        Shift: true,
-        Profile: true,
+        product: true,
+        store: true,
+        shift: true,
+        profile: true,
       },
     });
   }
@@ -48,10 +48,10 @@ export class SalesService {
       where: { id },
       data: updateSaleDto,
       include: {
-        Product: true,
-        Store: true,
-        Shift: true,
-        Profile: true,
+        product: true,
+        store: true,
+        shift: true,
+        profile: true,
       },
     });
   }
@@ -66,10 +66,10 @@ export class SalesService {
     return this.prisma.sale.findMany({
       where: { shiftId },
       include: {
-        Product: true,
-        Store: true,
-        Shift: true,
-        Profile: true,
+        product: true,
+        store: true,
+        shift: true,
+        profile: true,
       },
     });
   }

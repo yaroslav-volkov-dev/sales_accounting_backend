@@ -5,7 +5,7 @@ import { UpdateCategoryDto } from '../../dto/update-category-dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findAll(includeCount: boolean) {
     if (!includeCount) {
@@ -27,7 +27,7 @@ export class CategoriesService {
         updatedAt: true,
         _count: {
           select: {
-            Product: true,
+            product: true,
           },
         },
       },

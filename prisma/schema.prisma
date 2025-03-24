@@ -41,14 +41,14 @@ enum Resource {
 }
 
 model organization {
-  id                   String                 @id @default(uuid())
-  name                 String
-  description          String?
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  roles                role[]
-  stores               store[]
-  organizationProfiles profile_organization[]
+  id                  String                @id @default(uuid())
+  name                String
+  description         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  roles               role[]
+  stores              store[]
+  organizationMembers organization_member[]
 }
 
 model role {
@@ -61,7 +61,7 @@ model role {
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   permissions    role_permission[]
-  userRoles      profile_role[]
+  memberRoles    member_role[]
 
   @@unique([name, organizationId])
 }
@@ -90,42 +90,42 @@ model role_permission {
   @@unique([roleId, permissionId])
 }
 
-model profile_organization {
-  id             String         @id @default(uuid())
+model organization_member {
+  id             String        @id @default(uuid())
   profileId      String
   organizationId String
-  isActive       Boolean        @default(true)
-  profile        profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  organization   organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  roles          profile_role[]
+  isActive       Boolean       @default(true)
+  profile        profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  organization   organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  roles          member_role[]
 
   @@unique([profileId, organizationId])
 }
 
-model profile_role {
-  id                    String               @id @default(uuid())
-  profileOrganizationId String
-  roleId                String
-  profileOrganization   profile_organization @relation(fields: [profileOrganizationId], references: [id], onDelete: Cascade)
-  role                  role                 @relation(fields: [roleId], references: [id], onDelete: Cascade)
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
+model member_role {
+  id        String              @id @default(uuid())
+  memberId  String
+  roleId    String
+  member    organization_member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  role      role                @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 
-  @@unique([profileOrganizationId, roleId])
+  @@unique([memberId, roleId])
 }
 
 model profile {
-  id                   String                 @id @default(uuid())
-  email                String                 @unique
-  firstName            String
-  lastName             String
-  phoneNumber          String?
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  sale                 sale[]
-  profileOrganizations profile_organization[]
+  id                  String                @id @default(uuid())
+  email               String                @unique
+  firstName           String
+  lastName            String
+  phoneNumber         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  sale                sale[]
+  memberOrganizations organization_member[]
 }
 
 model product {

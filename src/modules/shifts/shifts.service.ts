@@ -46,10 +46,10 @@ export class ShiftsService {
     return this.prisma.shift.findFirst({
       where: { userId, endedAt: null },
       include: {
-        Store: true,
-        Sale: {
+        store: true,
+        sale: {
           include: {
-            Product: true
+            product: true
           }
         }
       },

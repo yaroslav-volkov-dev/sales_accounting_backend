@@ -5,7 +5,7 @@ import { UpdateSupplierDto } from '../../dto/update-supplier-dto';
 
 @Injectable()
 export class SuppliersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findAll(includeCount: boolean) {
     if (!includeCount) {
@@ -26,7 +26,7 @@ export class SuppliersService {
         phoneNumber: true,
         _count: {
           select: {
-            Product: true,
+            product: true,
           },
         },
       },

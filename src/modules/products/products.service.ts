@@ -9,8 +9,8 @@ export class ProductsService {
   constructor(private prisma: PrismaService) { }
 
   private buildGetProductsFilters(
-    filters?: Prisma.ProductWhereInput,
-  ): Prisma.ProductFindManyArgs {
+    filters?: Prisma.productWhereInput,
+  ): Prisma.productFindManyArgs {
     return {
       where: {
         isActive: true,
@@ -20,13 +20,13 @@ export class ProductsService {
         createdAt: 'desc',
       },
       include: {
-        Category: {
+        category: {
           select: {
             name: true,
             id: true,
           },
         },
-        Supplier: {
+        supplier: {
           select: {
             name: true,
             id: true,
@@ -77,17 +77,17 @@ export class ProductsService {
         name,
         price,
         isActive: true,
-        Category: categoryId ? { connect: { id: categoryId } } : undefined,
-        Supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
-        Category: {
+        category: {
           select: {
             name: true,
             id: true,
           },
         },
-        Supplier: {
+        supplier: {
           select: {
             name: true,
             id: true,
@@ -106,17 +106,17 @@ export class ProductsService {
       data: {
         name,
         price,
-        Category: categoryId ? { connect: { id: categoryId } } : undefined,
-        Supplier: supplierId ? { connect: { id: supplierId } } : undefined,
+        category: categoryId ? { connect: { id: categoryId } } : undefined,
+        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
-        Category: {
+        category: {
           select: {
             name: true,
             id: true,
           },
         },
-        Supplier: {
+        supplier: {
           select: {
             name: true,
             id: true,
