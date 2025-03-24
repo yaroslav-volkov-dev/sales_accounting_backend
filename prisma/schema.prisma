@@ -19,17 +19,116 @@ enum PaymentMethod {
   CARD
 }
 
-model Profile {
-  id          String   @id @default(uuid())
-  email       String
-  firstName   String
-  lastName    String
-  phoneNumber String?
-  createdAt   DateTime @default(now())
-  Sale        Sale[]
+enum Action {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+  CLOSE
 }
 
-model Product {
+enum Resource {
+  PRODUCT
+  CATEGORY
+  SUPPLIER
+  STORE
+  SALE
+  SHIFT
+  USER
+  ROLE
+  PERMISSION
+  ORGANIZATION
+}
+
+model organization {
+  id                   String                 @id @default(uuid())
+  name                 String
+  description          String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  roles                role[]
+  stores               store[]
+  organizationProfiles profile_organization[]
+}
+
+model role {
+  id             String            @id @default(uuid())
+  name           String
+  isDefault      Boolean           @default(false)
+  isSuperAdmin   Boolean           @default(false)
+  organizationId String?
+  organization   organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  permissions    role_permission[]
+  userRoles      profile_role[]
+
+  @@unique([name, organizationId])
+}
+
+model permission {
+  id          String            @id @default(uuid())
+  action      Action
+  resource    Resource
+  description String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  roles       role_permission[]
+
+  @@unique([action, resource])
+}
+
+model role_permission {
+  id           String     @id @default(uuid())
+  roleId       String
+  permissionId String
+  role         role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([roleId, permissionId])
+}
+
+model profile_organization {
+  id             String         @id @default(uuid())
+  profileId      String
+  organizationId String
+  isActive       Boolean        @default(true)
+  profile        profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  organization   organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  roles          profile_role[]
+
+  @@unique([profileId, organizationId])
+}
+
+model profile_role {
+  id                    String               @id @default(uuid())
+  profileOrganizationId String
+  roleId                String
+  profileOrganization   profile_organization @relation(fields: [profileOrganizationId], references: [id], onDelete: Cascade)
+  role                  role                 @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
+
+  @@unique([profileOrganizationId, roleId])
+}
+
+model profile {
+  id                   String                 @id @default(uuid())
+  email                String                 @unique
+  firstName            String
+  lastName             String
+  phoneNumber          String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  sale                 sale[]
+  profileOrganizations profile_organization[]
+}
+
+model product {
   id         Int       @id @default(autoincrement())
   name       String
   createdAt  DateTime  @default(now())
@@ -38,50 +137,52 @@ model Product {
   isActive   Boolean   @default(true)
   categoryId Int?
   supplierId Int?
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  Supplier   Supplier? @relation(fields: [supplierId], references: [id])
-  Sale       Sale[]
+  category   category? @relation(fields: [categoryId], references: [id])
+  supplier   supplier? @relation(fields: [supplierId], references: [id])
+  sale       sale[]
 }
 
-model Category {
+model category {
   id        Int       @id @default(autoincrement())
   name      String
-  Product   Product[]
+  product   product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt()
 }
 
-model Supplier {
+model supplier {
   id          Int       @id @default(autoincrement())
   name        String
   phoneNumber String
-  Product     Product[]
+  product     product[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt()
 }
 
-model Store {
-  id          Int      @id @default(autoincrement())
-  name        String
-  location    String
-  phoneNumber String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Shift       Shift[]
-  Sale        Sale[]
+model store {
+  id             Int          @id @default(autoincrement())
+  name           String
+  location       String
+  phoneNumber    String
+  organizationId String
+  organization   organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  shift          shift[]
+  sale           sale[]
 }
 
-model Shift {
+model shift {
   id        Int       @id @default(autoincrement())
   userId    String
   storeId   Int
   startedAt DateTime  @default(now())
   endedAt   DateTime?
-  Store     Store     @relation(fields: [storeId], references: [id])
-  Sale      Sale[]
+  store     store     @relation(fields: [storeId], references: [id])
+  sale      sale[]
 }
 
-model Sale {
+model sale {
   id            Int           @id @default(autoincrement())
   quantity      Int
   sellingPrice  Int
@@ -92,8 +193,8 @@ model Sale {
   storeId       Int
   shiftId       Int
   userId        String
-  Product       Product       @relation(fields: [productId], references: [id])
-  Store         Store         @relation(fields: [storeId], references: [id])
-  Shift         Shift         @relation(fields: [shiftId], references: [id])
-  Profile       Profile       @relation(fields: [userId], references: [id])
+  product       product       @relation(fields: [productId], references: [id])
+  store         store         @relation(fields: [storeId], references: [id])
+  shift         shift         @relation(fields: [shiftId], references: [id])
+  profile       profile       @relation(fields: [userId], references: [id])
 }
