@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -43,7 +37,8 @@ enum Resource {
 model organization {
   id                  String                @id @default(uuid())
   name                String
-  description         String?
+  ownerId             String
+  owner               profile               @relation("OwnedOrganizations", fields: [ownerId], references: [id])
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   roles               role[]
@@ -54,10 +49,8 @@ model organization {
 model role {
   id             String            @id @default(uuid())
   name           String
-  isDefault      Boolean           @default(false)
-  isSuperAdmin   Boolean           @default(false)
-  organizationId String?
-  organization   organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
   permissions    role_permission[]
@@ -94,11 +87,10 @@ model organization_member {
   id             String        @id @default(uuid())
   profileId      String
   organizationId String
-  isActive       Boolean       @default(true)
-  profile        profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  organization   organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  profile        profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  organization   organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   roles          member_role[]
 
   @@unique([profileId, organizationId])
@@ -126,6 +118,7 @@ model profile {
   updatedAt           DateTime              @updatedAt
   sale                sale[]
   memberOrganizations organization_member[]
+  ownedOrganizations  organization[]        @relation("OwnedOrganizations")
 }
 
 model product {
