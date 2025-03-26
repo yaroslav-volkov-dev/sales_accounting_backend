@@ -28,27 +28,27 @@ export class AuthGuard implements CanActivate {
 
     const user = await this.prisma.profile.findUnique({
       where: { id: userId },
-      // include: {
-      //   ownedOrganizations: true,
-      //   memberOrganizations: {
-      //     include: {
-      //       organization: true,
-      //       roles: {
-      //         include: {
-      //           role: {
-      //             include: {
-      //               permissions: {
-      //                 include: {
-      //                   permission: true
-      //                 }
-      //               }
-      //             }
-      //           }
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
+      include: {
+        ownedOrganizations: true,
+        memberOrganizations: {
+          include: {
+            organization: true,
+            roles: {
+              include: {
+                role: {
+                  include: {
+                    permissions: {
+                      include: {
+                        permission: true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     });
 
     if (!user) {

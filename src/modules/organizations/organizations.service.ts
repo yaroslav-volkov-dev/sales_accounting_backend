@@ -25,15 +25,57 @@ export class OrganizationsService {
   }
 
   async setActiveOrganization(organizationId: string, userId: string) {
-    await this.prisma.profile.update({
-      where: { id: userId },
-      data: {
-        activeOrganization: {
-          connect: {
-            id: organizationId
+    const membership = await this.prisma.organization_member.findUnique({
+      where: {
+        profileId_organizationId: {
+          profileId: userId,
+          organizationId: organizationId
+        }
+      }
+    });
+
+    if (!membership) {
+      throw new Error('User is not a member of this organization');
+    }
+
+    const existingSession = await this.prisma.user_session.findUnique({
+      where: { profileId: userId },
+      include: {
+        membership: true
+      }
+    });
+
+    if (existingSession && existingSession.membership.organizationId === organizationId) {
+      return await this.prisma.user_session.findUnique({
+        where: { id: existingSession.id },
+        include: {
+          membership: {
+            include: {
+              organization: true
+            }
           }
         }
+      });
+    }
+
+    if (existingSession) {
+      await this.prisma.user_session.delete({
+        where: { id: existingSession.id }
+      });
+    }
+
+    return await this.prisma.user_session.create({
+      data: {
+        profileId: userId,
+        membershipId: membership.id
       },
+      include: {
+        membership: {
+          include: {
+            organization: true
+          }
+        }
+      }
     });
   }
 }
