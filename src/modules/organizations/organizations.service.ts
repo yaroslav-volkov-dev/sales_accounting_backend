@@ -23,4 +23,17 @@ export class OrganizationsService {
 
     return organization;
   }
+
+  async setActiveOrganization(organizationId: string, userId: string) {
+    await this.prisma.profile.update({
+      where: { id: userId },
+      data: {
+        activeOrganization: {
+          connect: {
+            id: organizationId
+          }
+        }
+      },
+    });
+  }
 }

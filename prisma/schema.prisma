@@ -38,12 +38,26 @@ model organization {
   id                  String                @id @default(uuid())
   name                String
   ownerId             String
-  owner               profile               @relation("OwnedOrganizations", fields: [ownerId], references: [id])
+  owner               profile               @relation("ownedOrganizations", fields: [ownerId], references: [id])
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   roles               role[]
   stores              store[]
   organizationMembers organization_member[]
+}
+
+model profile {
+  id                  String                @id @default(uuid())
+  email               String                @unique
+  firstName           String
+  lastName            String
+  phoneNumber         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  sale                sale[]
+  memberOrganizations organization_member[]
+  ownedOrganizations  organization[]        @relation("ownedOrganizations")
+  session             user_session?
 }
 
 model role {
@@ -92,6 +106,7 @@ model organization_member {
   profile        profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
   organization   organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   roles          member_role[]
+  session        user_session?
 
   @@unique([profileId, organizationId])
 }
@@ -108,17 +123,14 @@ model member_role {
   @@unique([memberId, roleId])
 }
 
-model profile {
-  id                  String                @id @default(uuid())
-  email               String                @unique
-  firstName           String
-  lastName            String
-  phoneNumber         String?
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  sale                sale[]
-  memberOrganizations organization_member[]
-  ownedOrganizations  organization[]        @relation("OwnedOrganizations")
+model user_session {
+  id           String              @id @default(uuid())
+  profileId    String              @unique
+  membershipId String              @unique
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  profile      profile             @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  membership   organization_member @relation(fields: [membershipId], references: [id], onDelete: Cascade)
 }
 
 model product {

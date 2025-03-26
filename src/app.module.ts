@@ -13,7 +13,7 @@ import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { CompanyModule } from './modules/company/company.module';
-
+import { OrganizationsModule } from './modules/organizations/organizations.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,7 +27,8 @@ import { CompanyModule } from './modules/company/company.module';
     UsersModule,
     AuthModule,
     ProfileModule,
-    CompanyModule
+    CompanyModule,
+    OrganizationsModule
   ],
   controllers: [AppController],
   providers: [AppService],

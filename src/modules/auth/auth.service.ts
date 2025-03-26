@@ -95,7 +95,18 @@ export class AuthService {
       throw new UnauthorizedException('Failed to get user');
     }
 
-    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
+    const user = await this.prisma.profile.findUnique({
+      where: { id: data.user.id },
+      include: {
+        ownedOrganizations: true,
+        memberOrganizations: {
+          include: {
+            organization: true,
+            roles: true
+          }
+        }
+      }
+    });
 
     return { user };
   }
