@@ -5,6 +5,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
+import { UserWithAllRelations } from "src/types/user.types";
 
 @Injectable()
 export class AuthService {
@@ -88,7 +89,11 @@ export class AuthService {
     return { user };
   }
 
-  async getMe(accessToken: string) {
+  async getMe(accessToken: string): Promise<{ user: UserWithAllRelations }> {
+    if (!accessToken) {
+      throw new UnauthorizedException('Token not provided');
+    }
+
     const { data, error } = await this.supabase.auth.getUser(accessToken);
 
     if (error) {
@@ -97,16 +102,11 @@ export class AuthService {
 
     const user = await this.prisma.profile.findUnique({
       where: { id: data.user.id },
-      include: {
-        ownedOrganizations: true,
-        memberOrganizations: {
-          include: {
-            organization: true,
-            roles: true
-          }
-        }
-      }
     });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
 
     return { user };
   }

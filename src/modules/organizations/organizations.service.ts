@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { profile } from "@prisma/client";
 
 @Injectable()
 export class OrganizationsService {
@@ -25,6 +26,7 @@ export class OrganizationsService {
   }
 
   async setActiveOrganization(organizationId: string, userId: string) {
+
     const membership = await this.prisma.organization_member.findUnique({
       where: {
         profileId_organizationId: {

@@ -11,13 +11,7 @@ export class AuthController {
 
   @Get('me')
   async getMe(@Req() req: Request) {
-    const accessToken = req.cookies[TokenName.ACCESS_TOKEN];
-
-    if (!accessToken) {
-      throw new UnauthorizedException('Token not provided');
-    }
-
-    return this.authService.getMe(accessToken);
+    return this.authService.getMe(req.cookies[TokenName.ACCESS_TOKEN]);
   }
 
   @Post('register')
