@@ -3,11 +3,11 @@ import { CreateOrganizationDto } from "./dto/create-organization.dto";
 import { CurrentUser } from "src/decorators/current-user";
 import { profile } from "@prisma/client";
 import { OrganizationsService } from "./organizations.service";
-import { AuthGuard } from "src/guards/auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { SetActiveOrganizationDto } from "./dto/set-active-organization.dto";
+import { AuthGuard } from "../auth/auth.guard";
 
-@Controller('organizations')
+@Controller('workspaces')
 export class OrganizationsController {
   constructor(private readonly organizationService: OrganizationsService) { }
 

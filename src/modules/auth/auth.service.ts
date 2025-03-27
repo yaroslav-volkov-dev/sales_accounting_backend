@@ -5,7 +5,6 @@ import { RegisterDto } from "./dto/register.dto";
 import { Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
-import { UserWithAllRelations } from "src/types/user.types";
 
 @Injectable()
 export class AuthService {
@@ -89,7 +88,7 @@ export class AuthService {
     return { user };
   }
 
-  async getMe(accessToken: string): Promise<{ user: UserWithAllRelations }> {
+  async getMe(accessToken: string) {
     if (!accessToken) {
       throw new UnauthorizedException('Token not provided');
     }
@@ -102,6 +101,18 @@ export class AuthService {
 
     const user = await this.prisma.profile.findUnique({
       where: { id: data.user.id },
+      include: {
+        memberOrganizations: {
+          include: {
+            organization: true,
+            roles: {
+              include: {
+                role: true
+              }
+            }
+          }
+        }
+      }
     });
 
     if (!user) {
@@ -119,6 +130,10 @@ export class AuthService {
     }
 
     const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
 
     const refreshToken = data.session.refresh_token;
     const accessToken = data.session.access_token;

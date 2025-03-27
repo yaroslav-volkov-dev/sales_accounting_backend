@@ -1,7 +1,6 @@
-import { IsNotEmpty, IsString } from "class-validator";
-
+import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 export class CreateOrganizationDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  organizationName: string;
 }

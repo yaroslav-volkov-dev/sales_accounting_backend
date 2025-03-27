@@ -37,8 +37,6 @@ enum Resource {
 model organization {
   id                  String                @id @default(uuid())
   name                String
-  ownerId             String
-  owner               profile               @relation("ownedOrganizations", fields: [ownerId], references: [id])
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
   roles               role[]
@@ -56,17 +54,17 @@ model profile {
   updatedAt           DateTime              @updatedAt
   sale                sale[]
   memberOrganizations organization_member[]
-  ownedOrganizations  organization[]        @relation("ownedOrganizations")
   session             user_session?
 }
 
 model role {
   id             String            @id @default(uuid())
   name           String
-  organizationId String
-  organization   organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  isSuperAdmin   Boolean           @default(false)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  organizationId String
+  organization   organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   permissions    role_permission[]
   memberRoles    member_role[]
 
@@ -115,10 +113,10 @@ model member_role {
   id        String              @id @default(uuid())
   memberId  String
   roleId    String
-  member    organization_member @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  role      role                @relation(fields: [roleId], references: [id], onDelete: Cascade)
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
+  role      role                @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  member    organization_member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 
   @@unique([memberId, roleId])
 }
