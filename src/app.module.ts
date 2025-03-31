@@ -28,7 +28,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     AuthModule,
     ProfileModule,
     CompanyModule,
-    OrganizationsModule
+    OrganizationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

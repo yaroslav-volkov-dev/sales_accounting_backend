@@ -5,7 +5,6 @@ import { RegisterDto } from "./dto/register.dto";
 import { Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
-import { CurrentUserType } from "src/decorators/current-user";
 
 @Injectable()
 export class AuthService {

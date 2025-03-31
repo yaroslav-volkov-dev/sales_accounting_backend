@@ -2,15 +2,14 @@ import { ForbiddenException, Injectable, SetMetadata } from "@nestjs/common";
 import { CanActivate } from "@nestjs/common";
 import { ExecutionContext } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { CurrentUserType } from "src/decorators/current-user";
 
 const WORKSPACE_ID_PARAM = 'workspaceIdParam';
 const FALLBACK_WORKSPACE_ID_PARAM = 'workspaceId';
 
-export const WorkspaceMember = (workspaceIdParam: string = FALLBACK_WORKSPACE_ID_PARAM) => SetMetadata(WORKSPACE_ID_PARAM, workspaceIdParam);
+export const WorkspaceIdParam = (workspaceIdParam: string = FALLBACK_WORKSPACE_ID_PARAM) => SetMetadata(WORKSPACE_ID_PARAM, workspaceIdParam);
 
 @Injectable()
-export class WorkspaceMemberGuard implements CanActivate {
+export class MembershipGuard implements CanActivate {
   constructor(private reflector: Reflector) { }
 
   canActivate(context: ExecutionContext): boolean {
@@ -20,7 +19,7 @@ export class WorkspaceMemberGuard implements CanActivate {
     ) || FALLBACK_WORKSPACE_ID_PARAM;
 
     const request = context.switchToHttp().getRequest();
-    const user: CurrentUserType = request.user;
+    const user = request.user;
 
     if (!user) {
       throw new ForbiddenException('User not authenticated');

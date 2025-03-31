@@ -21,7 +21,7 @@ export class UsersService {
     return user;
   }
 
-  async startWorkspaceSession(organizationId: string, userId: string) {
+  async startWorkspaceSession({ organizationId, userId, membershipId }: { organizationId: string, userId: string, membershipId: string }) {
     const existingSession = await this.prisma.user_session.findUnique({
       where: { profileId: userId },
       include: {
@@ -51,7 +51,7 @@ export class UsersService {
     return await this.prisma.user_session.create({
       data: {
         profileId: userId,
-        membershipId: membership.id
+        membershipId: membershipId
       },
     });
   }

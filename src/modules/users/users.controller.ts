@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Put, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Param, ParseUUIDPipe, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CurrentUser } from 'src/decorators/current-user';
-import { CurrentUserType } from 'src/decorators/current-user';
+import { User } from 'src/common/decorators/user.decorator';
 import { AuthGuard } from '../auth/auth.guard';
-import { WorkspaceMember, WorkspaceMemberGuard } from 'src/guards/workspace-member.guard';
+import { MembershipGuard, WorkspaceIdParam } from 'src/common/guards/membership.guard';
+import { Membership } from 'src/common/decorators/membership.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -19,13 +19,18 @@ export class UsersController {
     return this.usersService.updateUser(id, dto);
   }
 
-  @UseGuards(AuthGuard, WorkspaceMemberGuard)
-  @WorkspaceMember('workspaceId')
+  @UseGuards(AuthGuard, MembershipGuard)
+  @WorkspaceIdParam('workspaceId')
   @Put('start-session/:workspaceId')
   async startWorkspaceSession(
     @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
-    @CurrentUser() user: CurrentUserType
+    @User('id', ParseUUIDPipe) userId: string,
+    @Membership('id', ParseUUIDPipe) membershipId: string
   ) {
-    return this.usersService.startWorkspaceSession(workspaceId, user.id);
+    return this.usersService.startWorkspaceSession({
+      organizationId: workspaceId,
+      userId: userId,
+      membershipId: membershipId
+    });
   }
 }

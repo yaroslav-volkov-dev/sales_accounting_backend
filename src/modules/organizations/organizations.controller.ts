@@ -1,9 +1,8 @@
-import { Controller, Post, Body, Put } from "@nestjs/common";
+import { Controller, Post, Body, Put, ParseUUIDPipe, UseGuards } from "@nestjs/common";
 import { CreateOrganizationDto } from "./dto/create-organization.dto";
-import { CurrentUser, CurrentUserType } from "src/decorators/current-user";
 import { OrganizationsService } from "./organizations.service";
-import { UseGuards } from "@nestjs/common";
 import { AuthGuard } from "../auth/auth.guard";
+import { User } from "src/common/decorators/user.decorator";
 
 @Controller('workspaces')
 export class OrganizationsController {
@@ -11,8 +10,8 @@ export class OrganizationsController {
 
   @Post('create')
   @UseGuards(AuthGuard)
-  async createOrganization(@Body() dto: CreateOrganizationDto, @CurrentUser() user: CurrentUserType) {
-    return this.organizationService.createOrganization({ dto, ownerId: user.id });
+  async createOrganization(@Body() dto: CreateOrganizationDto, @User('id', ParseUUIDPipe) userId: string) {
+    return this.organizationService.createOrganization({ dto, ownerId: userId });
   }
 }
 
