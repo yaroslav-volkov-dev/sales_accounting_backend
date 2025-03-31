@@ -5,6 +5,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
+import { CurrentUserType } from "src/decorators/current-user";
 
 @Injectable()
 export class AuthService {
@@ -68,7 +69,7 @@ export class AuthService {
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
-    return { user };
+    return user;
   }
 
   async login(dto: LoginDto, res: Response) {
@@ -85,7 +86,7 @@ export class AuthService {
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
-    return { user };
+    return user;
   }
 
   async getMe(accessToken: string) {
@@ -105,21 +106,18 @@ export class AuthService {
         memberOrganizations: {
           include: {
             organization: true,
-            roles: {
-              include: {
-                role: true
-              }
-            }
           }
-        }
+        },
+        session: true,
       }
     });
+
 
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
-    return { user };
+    return user;
   }
 
   async refreshSession(token: string, res: Response) {
@@ -141,7 +139,7 @@ export class AuthService {
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
-    return { user };
+    return user
   }
 
   async logout(res: Response) {
