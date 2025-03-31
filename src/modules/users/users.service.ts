@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
@@ -53,6 +53,12 @@ export class UsersService {
         profileId: userId,
         membershipId: membershipId
       },
+    });
+  }
+
+  async closeWorkspaceSession(userId: string) {
+    return await this.prisma.user_session.delete({
+      where: { profileId: userId }
     });
   }
 }

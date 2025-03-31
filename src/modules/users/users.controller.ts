@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Param, ParseUUIDPipe, Post, UseGuards, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Put, Param, ParseUUIDPipe, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from 'src/common/decorators/user.decorator';
@@ -21,7 +21,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard, MembershipGuard)
   @WorkspaceIdParam('workspaceId')
-  @Put('start-session/:workspaceId')
+  @Post('start-session/:workspaceId')
   async startWorkspaceSession(
     @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
     @User('id', ParseUUIDPipe) userId: string,
@@ -32,5 +32,13 @@ export class UsersController {
       userId: userId,
       membershipId: membershipId
     });
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete('close-session')
+  async closeWorkspaceSession(
+    @User('id', ParseUUIDPipe) userId: string,
+  ) {
+    return this.usersService.closeWorkspaceSession(userId);
   }
 }
