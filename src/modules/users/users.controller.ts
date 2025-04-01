@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, Put, Param, ParseUUIDPipe, Post, UseGuards, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from 'src/common/decorators/user.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { MembershipGuard, WorkspaceIdParam } from 'src/common/guards/membership.guard';
 import { Membership } from 'src/common/decorators/membership.decorator';
+import { SessionGuard } from 'src/common/guards/session.guard';
+import { Session } from 'src/common/decorators/session.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -23,22 +24,16 @@ export class UsersController {
   @WorkspaceIdParam('workspaceId')
   @Post('start-session/:workspaceId')
   async startWorkspaceSession(
-    @Param('workspaceId', ParseUUIDPipe) workspaceId: string,
-    @User('id', ParseUUIDPipe) userId: string,
-    @Membership('id', ParseUUIDPipe) membershipId: string
+    @Membership('id', ParseUUIDPipe) memberId: string,
   ) {
-    return this.usersService.startWorkspaceSession({
-      organizationId: workspaceId,
-      userId: userId,
-      membershipId: membershipId
-    });
+    return this.usersService.startWorkspaceSession({ memberId });
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, SessionGuard)
   @Delete('close-session')
   async closeWorkspaceSession(
-    @User('id', ParseUUIDPipe) userId: string,
+    @Session('id', ParseUUIDPipe) sessionId: string,
   ) {
-    return this.usersService.closeWorkspaceSession(userId);
+    return this.usersService.closeWorkspaceSession(sessionId);
   }
 }

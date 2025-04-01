@@ -15,7 +15,6 @@ export class SalesService {
         product: true,
         store: true,
         shift: true,
-        profile: true,
       },
     });
   }
@@ -26,7 +25,6 @@ export class SalesService {
         product: true,
         store: true,
         shift: true,
-        profile: true,
       },
     });
   }
@@ -38,7 +36,6 @@ export class SalesService {
         product: true,
         store: true,
         shift: true,
-        profile: true,
       },
     });
   }
@@ -51,7 +48,6 @@ export class SalesService {
         product: true,
         store: true,
         shift: true,
-        profile: true,
       },
     });
   }
@@ -69,7 +65,6 @@ export class SalesService {
         product: true,
         store: true,
         shift: true,
-        profile: true,
       },
     });
   }

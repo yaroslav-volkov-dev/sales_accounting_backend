@@ -9,6 +9,6 @@ export const User = createParamDecorator(
       throw new UnauthorizedException('Missing user in request');
     }
 
-    return property ? user[property] : user;
+    return property ? user?.[property] : user;
   },
 );

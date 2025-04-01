@@ -52,9 +52,7 @@ model profile {
   phoneNumber         String?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
-  sale                sale[]
   memberOrganizations organization_member[]
-  session             user_session?
 }
 
 model role {
@@ -104,7 +102,7 @@ model organization_member {
   profile        profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
   organization   organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   roles          member_role[]
-  session        user_session?
+  session        session?
 
   @@unique([profileId, organizationId])
 }
@@ -121,14 +119,12 @@ model member_role {
   @@unique([memberId, roleId])
 }
 
-model user_session {
-  id           String              @id @default(uuid())
-  profileId    String              @unique
-  membershipId String              @unique
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  profile      profile             @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  membership   organization_member @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+model session {
+  id        String              @id @default(uuid())
+  memberId  String              @unique
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  member    organization_member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 }
 
 model product {
@@ -199,5 +195,4 @@ model sale {
   product       product       @relation(fields: [productId], references: [id])
   store         store         @relation(fields: [storeId], references: [id])
   shift         shift         @relation(fields: [shiftId], references: [id])
-  profile       profile       @relation(fields: [userId], references: [id])
 }

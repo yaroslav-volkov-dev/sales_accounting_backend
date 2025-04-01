@@ -21,44 +21,13 @@ export class UsersService {
     return user;
   }
 
-  async startWorkspaceSession({ organizationId, userId, membershipId }: { organizationId: string, userId: string, membershipId: string }) {
-    const existingSession = await this.prisma.user_session.findUnique({
-      where: { profileId: userId },
-      include: {
-        membership: true
-      }
-    });
-
-    if (existingSession && existingSession.membership.organizationId === organizationId) {
-      return await this.prisma.user_session.findUnique({
-        where: { id: existingSession.id },
-        include: {
-          membership: {
-            include: {
-              organization: true
-            }
-          }
-        }
-      });
-    }
-
-    if (existingSession) {
-      await this.prisma.user_session.delete({
-        where: { id: existingSession.id }
-      });
-    }
-
-    return await this.prisma.user_session.create({
-      data: {
-        profileId: userId,
-        membershipId: membershipId
-      },
+  async startWorkspaceSession({ memberId }: { memberId: string }) {
+    return await this.prisma.session.create({
+      data: { memberId },
     });
   }
 
-  async closeWorkspaceSession(userId: string) {
-    return await this.prisma.user_session.delete({
-      where: { profileId: userId }
-    });
+  async closeWorkspaceSession(sessionId: string) {
+    return await this.prisma.session.delete({ where: { id: sessionId } });
   }
 }

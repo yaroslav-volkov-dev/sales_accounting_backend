@@ -5,7 +5,8 @@ import { RegisterDto } from "./dto/register.dto";
 import { Response } from "express";
 import { LoginDto } from "./dto/login.dto";
 import { TokenName, ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from "src/constants";
-
+import { Prisma } from "@prisma/client";
+import { SerializedUser, User } from "./auth.types";
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,6 +32,26 @@ export class AuthService {
       maxAge: ACCESS_TOKEN_MAX_AGE,
       path: '/',
     });
+  }
+
+  private userInclude = {
+    memberOrganizations: {
+      include: {
+        organization: true,
+        session: true
+      }
+    }
+  } satisfies Prisma.profileInclude
+
+
+  private serializeUser(user: User): SerializedUser {
+    const { memberOrganizations, ...scalarUser } = user;
+
+    return {
+      user: scalarUser,
+      session: memberOrganizations.find(m => m.session)?.session || null,
+      workspaces: memberOrganizations,
+    }
   }
 
   async register(registerDto: RegisterDto, res: Response) {
@@ -63,12 +84,16 @@ export class AuthService {
 
     const refreshToken = data.session.refresh_token;
     const accessToken = data.session.access_token;
-    const user = await this.prisma.profile.create({ data: { id, ...userData } });
+
+    const user = await this.prisma.profile.create({
+      data: { id, ...userData },
+      include: this.userInclude
+    });
 
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
-    return user;
+    return this.serializeUser(user);
   }
 
   async login(dto: LoginDto, res: Response) {
@@ -80,12 +105,16 @@ export class AuthService {
 
     const refreshToken = data.session.refresh_token;
     const accessToken = data.session.access_token;
-    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
+
+    const user: User = await this.prisma.profile.findUnique({
+      where: { id: data.user.id },
+      include: this.userInclude
+    });
 
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
-    return user;
+    return this.serializeUser(user);
   }
 
   async getMe(accessToken: string) {
@@ -99,24 +128,12 @@ export class AuthService {
       throw new UnauthorizedException('Failed to get user');
     }
 
-    const user = await this.prisma.profile.findUnique({
+    const user: User = await this.prisma.profile.findUnique({
       where: { id: data.user.id },
-      include: {
-        memberOrganizations: {
-          include: {
-            organization: true,
-          }
-        },
-        session: true,
-      }
+      include: this.userInclude
     });
 
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
-    }
-
-    return user;
+    return this.serializeUser(user);
   }
 
   async refreshSession(token: string, res: Response) {
@@ -126,7 +143,10 @@ export class AuthService {
       throw new UnauthorizedException('Failed to refresh token');
     }
 
-    const user = await this.prisma.profile.findUnique({ where: { id: data.user.id } });
+    const user = await this.prisma.profile.findUnique({
+      where: { id: data.user.id },
+      include: this.userInclude
+    });
 
     if (!user) {
       throw new UnauthorizedException('User not found');
