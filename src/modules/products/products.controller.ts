@@ -30,19 +30,19 @@ export class ProductsController {
 
   @Put(':id')
   async updateProduct(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @Body() body: UpdateProductDto,
   ) {
     return this.productsService.updateProduct(id, body);
   }
 
   @Delete(':id')
-  async deleteProduct(@Param('id', ParseIntPipe) id: number) {
+  async deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteProduct(id);
   }
 
   @Delete(':id/permanent')
-  async permanentDeleteProduct(@Param('id', ParseIntPipe) id: number) {
+  async permanentDeleteProduct(@Param('id') id: string) {
     return this.productsService.permanentDeleteProduct(id);
   }
 }

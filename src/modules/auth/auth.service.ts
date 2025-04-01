@@ -47,10 +47,18 @@ export class AuthService {
   private serializeUser(user: User): SerializedUser {
     const { memberOrganizations, ...scalarUser } = user;
 
+    const activeMembership = memberOrganizations.find(m => m.session);
+
+    const session = activeMembership ? {
+      id: activeMembership?.session?.id,
+      memberId: activeMembership?.session?.memberId,
+      workspaceId: activeMembership?.organizationId,
+    } : null;
+
     return {
+      session,
       user: scalarUser,
-      session: memberOrganizations.find(m => m.session)?.session || null,
-      workspaces: memberOrganizations,
+      memberships: memberOrganizations,
     }
   }
 
@@ -114,6 +122,7 @@ export class AuthService {
     this.setRefreshTokenCookie(res, refreshToken);
     this.setAccessTokenCookie(res, accessToken);
 
+    console.log(this.serializeUser(user));
     return this.serializeUser(user);
   }
 

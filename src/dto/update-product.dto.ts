@@ -1,4 +1,4 @@
-import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateProductDto {
@@ -12,14 +12,6 @@ export class UpdateProductDto {
   price: number;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  categoryId?: number;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  @IsPositive()
-  supplierId?: number;
+  @IsUUID()
+  categoryId?: string;
 }

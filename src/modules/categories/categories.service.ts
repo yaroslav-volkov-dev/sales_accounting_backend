@@ -7,16 +7,11 @@ import { UpdateCategoryDto } from '../../dto/update-category-dto';
 export class CategoriesService {
   constructor(private prisma: PrismaService) { }
 
-  findAll(includeCount: boolean) {
-    if (!includeCount) {
-      return this.prisma.category.findMany({
-        orderBy: {
-          createdAt: 'desc',
-        },
-      });
-    }
-
+  findWorkspaceCategories(workspaceId: string) {
     return this.prisma.category.findMany({
+      where: {
+        workspaceId,
+      },
       orderBy: {
         createdAt: 'desc',
       },
@@ -34,18 +29,18 @@ export class CategoriesService {
     });
   }
 
-  create(data: CreateCategoryDto) {
-    return this.prisma.category.create({ data });
+  create(data: CreateCategoryDto, workspaceId: string) {
+    return this.prisma.category.create({ data: { ...data, workspaceId } });
   }
 
-  update(id: number, data: UpdateCategoryDto) {
+  update(id: string, data: UpdateCategoryDto, workspaceId: string) {
     return this.prisma.category.update({
-      where: { id },
+      where: { id, workspaceId },
       data,
     });
   }
 
-  remove(id: number) {
-    return this.prisma.category.delete({ where: { id } });
+  remove(id: string, workspaceId: string) {
+    return this.prisma.category.delete({ where: { id, workspaceId } });
   }
 }

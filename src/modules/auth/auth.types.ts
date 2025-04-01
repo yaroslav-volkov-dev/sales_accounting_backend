@@ -4,7 +4,8 @@ export type User = Prisma.profileGetPayload<{
   include: {
     memberOrganizations: {
       include: {
-        session: true
+        session: true,
+        organization: true,
       }
     }
   }
@@ -12,7 +13,11 @@ export type User = Prisma.profileGetPayload<{
 
 export type SerializedUser = {
   user: profile;
-  session: session | null;
-  workspaces: organization_member[];
+  session: {
+    id: string;
+    workspaceId: string;
+    memberId: string;
+  } | null;
+  memberships: organization_member[];
 }
 

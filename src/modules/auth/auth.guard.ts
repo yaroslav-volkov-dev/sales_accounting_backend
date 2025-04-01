@@ -18,11 +18,11 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('User not found');
     }
 
-    const { session, user, workspaces } = userData;
+    const { session, user, memberships } = userData;
 
     request.user = user;
     request.session = session;
-    request.workspaces = workspaces;
+    request.memberships = memberships;
 
     return true;
   }

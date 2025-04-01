@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsOptional, IsUUID } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetProductsQueryDto {
@@ -7,24 +7,11 @@ export class GetProductsQueryDto {
   @Transform(({ value }) => value.split(',').map((id) => parseInt(id)), {
     toClassOnly: true,
   })
-  @IsInt({ each: true })
-  categoryIds?: number[];
+  @IsUUID(undefined, { each: true })
+  categoryIds?: string[];
 
   @IsOptional()
   @Transform(({ value }) => value === 'true')
   @IsBoolean()
   withoutCategory?: boolean;
-
-  @IsOptional()
-  @IsArray()
-  @Transform(({ value }) => value.split(',').map((id) => parseInt(id)), {
-    toClassOnly: true,
-  })
-  @IsInt({ each: true })
-  suppliersIds?: number[];
-
-  @IsOptional()
-  @Transform(({ value }) => value === 'true')
-  @IsBoolean()
-  withoutSupplier?: boolean;
 }

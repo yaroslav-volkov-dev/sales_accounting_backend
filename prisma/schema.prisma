@@ -42,6 +42,7 @@ model organization {
   roles               role[]
   stores              store[]
   organizationMembers organization_member[]
+  categories          category[]
 }
 
 model profile {
@@ -128,34 +129,25 @@ model session {
 }
 
 model product {
-  id         Int       @id @default(autoincrement())
+  id         String    @id @default(uuid())
   name       String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt()
   price      Int
   isActive   Boolean   @default(true)
-  categoryId Int?
-  supplierId Int?
+  categoryId String?
   category   category? @relation(fields: [categoryId], references: [id])
-  supplier   supplier? @relation(fields: [supplierId], references: [id])
   sale       sale[]
 }
 
 model category {
-  id        Int       @id @default(autoincrement())
-  name      String
-  product   product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt()
-}
-
-model supplier {
-  id          Int       @id @default(autoincrement())
+  id          String       @id @default(uuid())
   name        String
-  phoneNumber String
+  workspaceId String
+  workspace   organization @relation(fields: [workspaceId], references: [id])
   product     product[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt()
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
 }
 
 model store {
@@ -182,13 +174,13 @@ model shift {
 }
 
 model sale {
-  id            Int           @id @default(autoincrement())
+  id            String        @id @default(uuid())
   quantity      Int
   sellingPrice  Int
   paymentMethod PaymentMethod
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  productId     Int
+  productId     String
   storeId       Int
   shiftId       Int
   userId        String

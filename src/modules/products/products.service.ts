@@ -26,12 +26,6 @@ export class ProductsService {
             id: true,
           },
         },
-        supplier: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
       },
     };
   }
@@ -42,9 +36,9 @@ export class ProductsService {
     suppliersIds,
     withoutSupplier,
   }: {
-    categoryIds?: number[];
+    categoryIds?: string[];
     withoutCategory?: boolean;
-    suppliersIds?: number[];
+    suppliersIds?: string[];
     withoutSupplier?: boolean;
   }) {
     if (
@@ -61,33 +55,22 @@ export class ProductsService {
         ...(categoryIds && categoryIds.length > 0
           ? [{ categoryId: { in: categoryIds } }]
           : []),
-        ...(suppliersIds && suppliersIds.length > 0
-          ? [{ supplierId: { in: suppliersIds } }]
-          : []),
         ...(withoutCategory ? [{ categoryId: null }] : []),
-        ...(withoutSupplier ? [{ supplierId: null }] : []),
       ]
     }));
 
   }
 
-  async addProduct({ categoryId, price, supplierId, name }: CreateProductDto) {
+  async addProduct({ categoryId, price, name }: CreateProductDto) {
     return this.prisma.product.create({
       data: {
         name,
         price,
         isActive: true,
         category: categoryId ? { connect: { id: categoryId } } : undefined,
-        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
         category: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
-        supplier: {
           select: {
             name: true,
             id: true,
@@ -98,8 +81,8 @@ export class ProductsService {
   }
 
   async updateProduct(
-    id: number,
-    { name, categoryId, supplierId, price }: UpdateProductDto,
+    id: string,
+    { name, categoryId, price }: UpdateProductDto,
   ) {
     return this.prisma.product.update({
       where: { id },
@@ -107,7 +90,6 @@ export class ProductsService {
         name,
         price,
         category: categoryId ? { connect: { id: categoryId } } : undefined,
-        supplier: supplierId ? { connect: { id: supplierId } } : undefined,
       },
       include: {
         category: {
@@ -116,26 +98,18 @@ export class ProductsService {
             id: true,
           },
         },
-        supplier: {
-          select: {
-            name: true,
-            id: true,
-          },
-        },
       },
     });
   }
 
-  async deleteProduct(id: number) {
-    // Мягкое удаление - устанавливаем isActive в false
+  async deleteProduct(id: string) {
     return this.prisma.product.update({
       where: { id },
       data: { isActive: false },
     });
   }
 
-  async permanentDeleteProduct(id: number) {
-    // Полное удаление из базы данных
+  async permanentDeleteProduct(id: string) {
     return this.prisma.product.delete({ where: { id } });
   }
 }

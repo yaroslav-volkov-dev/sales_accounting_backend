@@ -19,7 +19,7 @@ export class MembershipGuard implements CanActivate {
     ) || FALLBACK_WORKSPACE_ID_PARAM;
 
     const request = context.switchToHttp().getRequest();
-    const workspaces = request.workspaces;
+    const workspaces = request.memberships;
     const workspaceId = request.params[workspaceIdParam];
 
     if (!workspaceId) {
