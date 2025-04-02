@@ -7,23 +7,38 @@ import { UpdateStoreDto } from '../../dto/store/update-store.dto';
 export class StoresService {
   constructor(private prisma: PrismaService) { }
 
-  findAll() {
+  findAllByWorkspaceId(workspaceId: string) {
     return this.prisma.store.findMany({
-      orderBy: {
-        createdAt: 'desc',
+      where: {
+        workspaceId,
       },
     });
   }
 
-  create(data: CreateStoreDto) {
-    return this.prisma.store.create({ data });
+  createInWorkspace(data: CreateStoreDto, workspaceId: string) {
+    return this.prisma.store.create({
+      data: {
+        ...data,
+        workspace: {
+          connect: { id: workspaceId }
+        }
+      }
+    });
   }
 
-  update(id: number, data: UpdateStoreDto) {
-    return this.prisma.store.update({ where: { id }, data });
+  updateInWorkspace(data: UpdateStoreDto, id: string, workspaceId: string) {
+    return this.prisma.store.update({
+      where: {
+        id,
+        workspaceId
+      },
+      data
+    });
   }
 
-  delete(id: number) {
-    return this.prisma.store.delete({ where: { id } });
+  deleteInWorkspace(id: string, workspaceId: string) {
+    return this.prisma.store.delete({
+      where: { id, workspaceId }
+    });
   }
 }

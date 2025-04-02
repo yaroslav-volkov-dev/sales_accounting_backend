@@ -6,8 +6,6 @@ export class StartShiftDto {
   @IsNotEmpty()
   userId: string;
 
-  @IsInt()
-  @Transform(({ value }) => parseInt(value, 10))
-  @IsNotEmpty()
-  storeId: number;
+  @IsUUID()
+  storeId: string;
 }

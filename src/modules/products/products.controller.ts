@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -26,7 +25,7 @@ export class ProductsController {
   @Get()
   async getWorkspaceProducts(
     @Query() query: GetProductsQueryDto,
-    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
     return this.productsService.getProducts(query, workspaceId);
   }
@@ -34,7 +33,7 @@ export class ProductsController {
   @Post()
   async addProduct(
     @Body() product: CreateProductDto,
-    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
     return this.productsService.addProduct(product, workspaceId);
   }
@@ -43,7 +42,7 @@ export class ProductsController {
   async updateProduct(
     @Param('id') id: string,
     @Body() body: UpdateProductDto,
-    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
     return this.productsService.updateProduct(id, body, workspaceId);
   }
@@ -51,7 +50,7 @@ export class ProductsController {
   @Delete(':id')
   async deleteProduct(
     @Param('id') id: string,
-    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
     return this.productsService.deleteProduct(id, workspaceId);
   }
@@ -59,7 +58,7 @@ export class ProductsController {
   @Delete(':id/permanent')
   async permanentDeleteProduct(
     @Param('id') id: string,
-    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
     return this.productsService.permanentDeleteProduct(id, workspaceId);
   }

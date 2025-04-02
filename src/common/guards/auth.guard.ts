@@ -19,13 +19,16 @@ export class AuthGuard implements CanActivate {
     }
 
     const { memberOrganizations, ...user } = userData;
-
     const activeMembership = memberOrganizations.find(({ session }) => !!session);
-    const activeSession = activeMembership?.session;
+    const activeSession = activeMembership ? {
+      id: activeMembership?.session?.id,
+      workspaceId: activeMembership?.organization?.id,
+      memberId: activeMembership?.id,
+    } : null;
 
     request.user = user;
-    request.activeSession = activeSession;
     request.memberships = memberOrganizations;
+    request.activeSession = activeSession;
 
     return true;
   }

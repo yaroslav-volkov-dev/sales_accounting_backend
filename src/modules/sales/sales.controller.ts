@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { SalesService } from './sales.service';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { UpdateSaleDto } from './dto/update-sale.dto';
@@ -18,7 +18,7 @@ export class SalesController {
   }
 
   @Get('shift/:shiftId')
-  findAllByShiftId(@Param('shiftId', ParseIntPipe) shiftId: number) {
+  findAllByShiftId(@Param('shiftId', ParseUUIDPipe) shiftId: string) {
     return this.salesService.findAllByShiftId(shiftId);
   }
 
@@ -28,12 +28,12 @@ export class SalesController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() updateSaleDto: UpdateSaleDto) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateSaleDto: UpdateSaleDto) {
     return this.salesService.update(id, updateSaleDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.salesService.remove(id);
   }
 }

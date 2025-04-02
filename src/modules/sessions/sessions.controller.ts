@@ -23,7 +23,7 @@ export class SessionsController {
   @UseGuards(AuthGuard, ActiveSessionGuard)
   @Delete('close')
   async closeWorkspaceSession(
-    @ActiveSession('id', ParseUUIDPipe) sessionId: string,
+    @ActiveSession('id') sessionId: string,
   ) {
     return this.sessionsService.closeWorkspaceSession(sessionId);
   }

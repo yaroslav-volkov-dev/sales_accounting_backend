@@ -4,38 +4,50 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from '../../dto/store/create-store.dto';
 import { UpdateStoreDto } from '../../dto/store/update-store.dto';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { ActiveSessionGuard } from 'src/common/guards/session.guard';
+import { ActiveSession } from 'src/common/decorators/active-session.decorator';
+
+@UseGuards(AuthGuard, ActiveSessionGuard)
 
 @Controller('stores')
 export class StoresController {
   constructor(private readonly storesService: StoresService) { }
 
   @Get()
-  findAllStores() {
-    return this.storesService.findAll();
+  findAllByWorkspaceId(
+    @ActiveSession('workspaceId') workspaceId: string,
+  ) {
+    return this.storesService.findAllByWorkspaceId(workspaceId);
   }
 
   @Post()
-  addCategory(@Body() store: CreateStoreDto) {
-    return this.storesService.create(store);
+  createInWorkspace(
+    @Body() store: CreateStoreDto,
+    @ActiveSession('workspaceId') workspaceId: string,
+  ) {
+    return this.storesService.createInWorkspace(store, workspaceId);
   }
 
   @Put(':id')
-  updateCategory(
-    @Param('id', ParseIntPipe) id: number,
+  updateInWorkspace(
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() body: UpdateStoreDto,
+    @ActiveSession('workspaceId') workspaceId: string,
   ) {
-    return this.storesService.update(id, body);
+    return this.storesService.updateInWorkspace(body, id, workspaceId);
   }
 
   @Delete(':id')
-  deleteCategory(@Param('id', ParseIntPipe) id: number) {
-    return this.storesService.delete(id);
+  deleteInWorkspace(@Param('id', ParseUUIDPipe) id: string, @ActiveSession('workspaceId') workspaceId: string) {
+    return this.storesService.deleteInWorkspace(id, workspaceId);
   }
 }

@@ -5,13 +5,11 @@ export class CreateSaleDto {
     @IsUUID()
     productId: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    storeId: number;
+    @IsUUID()
+    storeId: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    shiftId: number;
+    @IsUUID()
+    shiftId: string;
 
     @IsUUID()
     userId: string;

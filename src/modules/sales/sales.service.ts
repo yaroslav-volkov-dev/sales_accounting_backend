@@ -54,7 +54,7 @@ export class SalesService {
     });
   }
 
-  findAllByShiftId(shiftId: number) {
+  findAllByShiftId(shiftId: string) {
     return this.prisma.sale.findMany({
       where: { shiftId },
       include: {

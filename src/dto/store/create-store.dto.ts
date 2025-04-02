@@ -11,8 +11,4 @@ export class CreateStoreDto {
   @IsOptional()
   @IsString()
   phoneNumber: string;
-
-  @IsString()
-  @IsUUID()
-  organizationId: string;
 }

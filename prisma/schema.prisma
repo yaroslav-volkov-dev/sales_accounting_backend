@@ -153,22 +153,22 @@ model category {
 }
 
 model store {
-  id             Int          @id @default(autoincrement())
-  name           String
-  location       String
-  phoneNumber    String
-  organizationId String
-  organization   organization @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  shift          shift[]
-  sale           sale[]
+  id          String       @id @default(uuid())
+  name        String
+  location    String
+  phoneNumber String
+  workspaceId String
+  workspace   organization @relation(fields: [workspaceId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  shift       shift[]
+  sale        sale[]
 }
 
 model shift {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   userId    String
-  storeId   Int
+  storeId   String
   startedAt DateTime  @default(now())
   endedAt   DateTime?
   store     store     @relation(fields: [storeId], references: [id])
@@ -183,8 +183,8 @@ model sale {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   productId     String
-  storeId       Int
-  shiftId       Int
+  storeId       String
+  shiftId       String
   userId        String
   store         store         @relation(fields: [storeId], references: [id])
   shift         shift         @relation(fields: [shiftId], references: [id])
