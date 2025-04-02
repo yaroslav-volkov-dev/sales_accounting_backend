@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -12,14 +11,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { UpdateProductDto } from '../../dto/update-product.dto';
-import { CreateProductDto } from '../../dto/create-product.dto';
+import { UpdateProductDto } from '../../dto/product/update-product.dto';
+import { CreateProductDto } from '../../dto/product/create-product.dto';
 import { GetProductsQueryDto } from '../../dto/get-products-query.dto';
-import { AuthGuard } from '../auth/auth.guard';
-import { SessionGuard } from 'src/common/guards/session.guard';
-import { Session } from 'src/common/decorators/session.decorator';
+import { AuthGuard } from '../../common/guards/auth.guard';
+import { ActiveSessionGuard } from 'src/common/guards/session.guard';
+import { ActiveSession } from 'src/common/decorators/active-session.decorator';
 
-@UseGuards(AuthGuard, SessionGuard)
+@UseGuards(AuthGuard, ActiveSessionGuard)
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
@@ -27,7 +26,7 @@ export class ProductsController {
   @Get()
   async getWorkspaceProducts(
     @Query() query: GetProductsQueryDto,
-    @Session('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
   ) {
     return this.productsService.getProducts(query, workspaceId);
   }
@@ -35,7 +34,7 @@ export class ProductsController {
   @Post()
   async addProduct(
     @Body() product: CreateProductDto,
-    @Session('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
   ) {
     return this.productsService.addProduct(product, workspaceId);
   }
@@ -44,7 +43,7 @@ export class ProductsController {
   async updateProduct(
     @Param('id') id: string,
     @Body() body: UpdateProductDto,
-    @Session('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
   ) {
     return this.productsService.updateProduct(id, body, workspaceId);
   }
@@ -52,7 +51,7 @@ export class ProductsController {
   @Delete(':id')
   async deleteProduct(
     @Param('id') id: string,
-    @Session('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
   ) {
     return this.productsService.deleteProduct(id, workspaceId);
   }
@@ -60,7 +59,7 @@ export class ProductsController {
   @Delete(':id/permanent')
   async permanentDeleteProduct(
     @Param('id') id: string,
-    @Session('workspaceId', ParseUUIDPipe) workspaceId: string,
+    @ActiveSession('workspaceId', ParseUUIDPipe) workspaceId: string,
   ) {
     return this.productsService.permanentDeleteProduct(id, workspaceId);
   }

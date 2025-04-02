@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateOrganizationDto } from "./dto/create-organization.dto";
+import { CreateWorkspaceDto } from "../../dto/workspace/create-workspace.dto";
 
 @Injectable()
 export class OrganizationsService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async createOrganization({ dto, ownerId }: { dto: CreateOrganizationDto, ownerId: string }) {
+  async createOrganization({ dto, ownerId }: { dto: CreateWorkspaceDto, ownerId: string }) {
     const { organizationName } = dto;
 
     const organization = await this.prisma.organization.create({ data: { name: organizationName } });

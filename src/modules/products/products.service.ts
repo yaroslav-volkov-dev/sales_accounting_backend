@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateProductDto } from '../../dto/create-product.dto';
-import { UpdateProductDto } from '../../dto/update-product.dto';
+import { CreateProductDto } from '../../dto/product/create-product.dto';
+import { UpdateProductDto } from '../../dto/product/update-product.dto';
 import { Prisma } from '@prisma/client';
 import { GetProductsQueryDto } from 'src/dto/get-products-query.dto';
 

@@ -1,11 +1,11 @@
 import { Controller, Delete, ParseUUIDPipe, Post, UseGuards } from "@nestjs/common";
 import { MembershipGuard } from "src/common/guards/membership.guard";
-import { AuthGuard } from "../auth/auth.guard";
-import { SessionGuard } from "src/common/guards/session.guard";
+import { AuthGuard } from "../../common/guards/auth.guard";
+import { ActiveSessionGuard } from "src/common/guards/session.guard";
 import { Membership } from "src/common/decorators/membership.decorator";
 import { WorkspaceIdParam } from "src/common/guards/membership.guard";
 import { SessionsService } from "./sessions.service";
-import { Session } from "src/common/decorators/session.decorator";
+import { ActiveSession } from "src/common/decorators/active-session.decorator";
 
 @Controller('sessions')
 export class SessionsController {
@@ -15,15 +15,15 @@ export class SessionsController {
   @WorkspaceIdParam('workspaceId')
   @Post('start/:workspaceId')
   async startWorkspaceSession(
-    @Membership('id', ParseUUIDPipe) memberId: string,
+    @Membership('id', ParseUUIDPipe) membershipId: string,
   ) {
-    return this.sessionsService.startWorkspaceSession(memberId);
+    return this.sessionsService.startWorkspaceSession(membershipId);
   }
 
-  @UseGuards(AuthGuard, SessionGuard)
+  @UseGuards(AuthGuard, ActiveSessionGuard)
   @Delete('close')
   async closeWorkspaceSession(
-    @Session('id', ParseUUIDPipe) sessionId: string,
+    @ActiveSession('id', ParseUUIDPipe) sessionId: string,
   ) {
     return this.sessionsService.closeWorkspaceSession(sessionId);
   }

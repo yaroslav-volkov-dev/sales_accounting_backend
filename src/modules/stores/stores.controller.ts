@@ -9,12 +9,12 @@ import {
   Put,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
-import { CreateStoreDto } from '../../dto/create-store.dto';
-import { UpdateStoreDto } from '../../dto/update-store.dto';
+import { CreateStoreDto } from '../../dto/store/create-store.dto';
+import { UpdateStoreDto } from '../../dto/store/update-store.dto';
 
 @Controller('stores')
 export class StoresController {
-  constructor(private readonly storesService: StoresService) {}
+  constructor(private readonly storesService: StoresService) { }
 
   @Get()
   findAllStores() {

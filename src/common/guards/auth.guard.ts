@@ -1,28 +1,31 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { TokenName } from 'src/constants';
-import { AuthService } from 'src/modules/auth/auth.service';
+import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
   ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const accessToken = request.cookies[TokenName.ACCESS_TOKEN];
 
-    const userData = await this.authService.getMe(accessToken);
+    const userData = await this.usersService.findByToken(accessToken);
 
     if (!userData) {
       throw new UnauthorizedException('User not found');
     }
 
-    const { session, user, memberships } = userData;
+    const { memberOrganizations, ...user } = userData;
+
+    const activeMembership = memberOrganizations.find(({ session }) => !!session);
+    const activeSession = activeMembership?.session;
 
     request.user = user;
-    request.session = session;
-    request.memberships = memberships;
+    request.activeSession = activeSession;
+    request.memberships = memberOrganizations;
 
     return true;
   }

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateStoreDto } from '../../dto/create-store.dto';
-import { UpdateStoreDto } from '../../dto/update-store.dto';
+import { CreateStoreDto } from '../../dto/store/create-store.dto';
+import { UpdateStoreDto } from '../../dto/store/update-store.dto';
 
 @Injectable()
 export class StoresService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   findAll() {
     return this.prisma.store.findMany({

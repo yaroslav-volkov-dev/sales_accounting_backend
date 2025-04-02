@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Post, Req, Res, UnauthorizedException, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
 import { Response, Request } from 'express';
-import { LoginDto } from './dto/login.dto';
 import { TokenName } from 'src/constants';
-
+import { CreateUserDto } from 'src/dto/user/create-user-dto';
+import { LoginUserDto } from 'src/dto/user/login-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -16,7 +15,7 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body(new ValidationPipe({ whitelist: true })) dto: RegisterDto,
+    @Body() dto: CreateUserDto,
     @Res({ passthrough: true, }) res: Response,
   ) {
     return this.authService.register(dto, res);
@@ -24,7 +23,7 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body() dto: LoginDto,
+    @Body() dto: LoginUserDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.login(dto, res);

@@ -19,14 +19,14 @@ export class MembershipGuard implements CanActivate {
     ) || FALLBACK_WORKSPACE_ID_PARAM;
 
     const request = context.switchToHttp().getRequest();
-    const workspaces = request.memberships;
+    const memberships = request.memberships;
     const workspaceId = request.params[workspaceIdParam];
 
     if (!workspaceId) {
       throw new ForbiddenException('Workspace ID is required');
     }
 
-    const membership = workspaces.find((org) => org.organizationId === workspaceId);
+    const membership = memberships.find((org) => org.organizationId === workspaceId);
 
     if (!membership) {
       throw new ForbiddenException('User is not a member of this workspace');
