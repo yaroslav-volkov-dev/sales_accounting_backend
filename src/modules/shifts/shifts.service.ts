@@ -47,11 +47,6 @@ export class ShiftsService {
       where: { userId, endedAt: null },
       include: {
         store: true,
-        sale: {
-          include: {
-            product: true
-          }
-        }
       },
     });
   }

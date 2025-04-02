@@ -30,7 +30,14 @@ export class CategoriesService {
   }
 
   create(data: CreateCategoryDto, workspaceId: string) {
-    return this.prisma.category.create({ data: { ...data, workspaceId } });
+    return this.prisma.category.create({
+      data: {
+        ...data,
+        workspace: {
+          connect: { id: workspaceId }
+        }
+      }
+    });
   }
 
   update(id: string, data: UpdateCategoryDto, workspaceId: string) {

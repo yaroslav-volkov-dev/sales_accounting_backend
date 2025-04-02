@@ -12,7 +12,6 @@ export class SalesService {
     return this.prisma.sale.create({
       data: createSaleDto,
       include: {
-        product: true,
         store: true,
         shift: true,
       },
@@ -22,7 +21,6 @@ export class SalesService {
   findAll() {
     return this.prisma.sale.findMany({
       include: {
-        product: true,
         store: true,
         shift: true,
       },
@@ -33,7 +31,6 @@ export class SalesService {
     return this.prisma.sale.findUnique({
       where: { id },
       include: {
-        product: true,
         store: true,
         shift: true,
       },
@@ -45,7 +42,6 @@ export class SalesService {
       where: { id },
       data: updateSaleDto,
       include: {
-        product: true,
         store: true,
         shift: true,
       },
@@ -62,7 +58,6 @@ export class SalesService {
     return this.prisma.sale.findMany({
       where: { shiftId },
       include: {
-        product: true,
         store: true,
         shift: true,
       },
