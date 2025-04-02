@@ -19,21 +19,4 @@ export class UsersController {
   async updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }
-
-  @UseGuards(AuthGuard, MembershipGuard)
-  @WorkspaceIdParam('workspaceId')
-  @Post('start-session/:workspaceId')
-  async startWorkspaceSession(
-    @Membership('id', ParseUUIDPipe) memberId: string,
-  ) {
-    return this.usersService.startWorkspaceSession({ memberId });
-  }
-
-  @UseGuards(AuthGuard, SessionGuard)
-  @Delete('close-session')
-  async closeWorkspaceSession(
-    @Session('id', ParseUUIDPipe) sessionId: string,
-  ) {
-    return this.usersService.closeWorkspaceSession(sessionId);
-  }
 }

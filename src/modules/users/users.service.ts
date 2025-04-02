@@ -20,14 +20,4 @@ export class UsersService {
 
     return user;
   }
-
-  async startWorkspaceSession({ memberId }: { memberId: string }) {
-    return await this.prisma.session.create({
-      data: { memberId },
-    });
-  }
-
-  async closeWorkspaceSession(sessionId: string) {
-    return await this.prisma.session.delete({ where: { id: sessionId } });
-  }
 }

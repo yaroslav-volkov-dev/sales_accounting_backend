@@ -4,7 +4,7 @@ import { Transform } from 'class-transformer';
 export class GetProductsQueryDto {
   @IsOptional()
   @IsArray()
-  @Transform(({ value }) => value.split(',').map((id) => parseInt(id)), {
+  @Transform(({ value }) => value.split(',').map((id) => id), {
     toClassOnly: true,
   })
   @IsUUID(undefined, { each: true })

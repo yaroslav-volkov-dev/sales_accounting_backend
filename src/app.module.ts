@@ -13,6 +13,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { CompanyModule } from './modules/company/company.module';
 import { OrganizationsModule } from './modules/organizations/organizations.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
     ProfileModule,
     CompanyModule,
     OrganizationsModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
